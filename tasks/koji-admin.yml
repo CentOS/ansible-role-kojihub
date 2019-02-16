@@ -1,0 +1,21 @@
+- name: Creating local koji admin user if needed
+  user:
+    name: "{{ koji_admin_user }}"
+    comment: "Local koji admin"
+
+- name: Creating dir for koji config
+  file:
+    path: "/home/{{ koji_admin_user}}/.koji"
+    state: directory
+    owner: "{{ koji_admin_user }}"
+
+- name: Configuring koji client for admin
+  template:
+    src: koji-client-config.j2
+    dest: "/home/{{ koji_admin_user}}/.koji/config"
+
+- name: Copy TLS pem files for koji admin user
+  copy:
+    src: "{{ pkistore }}/koji/{{ koji_admin_pem }}"
+    dest: "/etc/pki/koji/{{ koji_admin_pem }}"
+ 

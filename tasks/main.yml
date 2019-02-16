@@ -1,0 +1,53 @@
+- include_role:
+    name: httpd
+  vars:
+    - httpd_tls: True
+
+- name: Ensuring we have some pkgs installed
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - koji
+    - koji-hub
+    - koji-hub-plugins
+    - koji-web
+    - koji-utils
+    - git
+    - gnupg2 
+
+- include_tasks: storage.yml
+- include_tasks: tls.yml
+- include_tasks: postgresql.yml
+
+- name: Configuring kojihub/web
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/{{ item }}"
+  with_items:
+    - koji-hub/hub.conf
+    - kojiweb/web.conf
+  notify:
+    - restart_httpd
+
+- name: Deploying koji custom theme
+  unarchive:
+    src: "{{ koji_theme_file }}"
+    dest: /
+  when:
+    - koji_custom_theme
+
+- name: Configuring httpd for kojihub/web
+  template:
+    src: "httpd/{{ item }}.j2"
+    dest: "/etc/httpd/conf.d/{{ item }}"
+  with_items:
+    - ssl-koji.conf
+    - kojihub.conf
+    - kojiweb.conf
+  notify:
+    - restart_httpd
+
+
+- include_tasks: koji-admin.yml
+  when: koji_admin_client

@@ -1,0 +1,48 @@
+# Default variables for kojihub role
+
+# Database settings
+koji_db_name: koji
+koji_db_user: koji
+koji_db_pass: MySQLSuckS
+
+# kojihub/web settings
+koji_sitename: CentOS Community Build Service
+koji_custom_theme: True
+koji_theme: centos
+koji_theme_file: koji-theme-centos.tar.gz
+koji_tls_proxydn: C=NA, ST=NA, O=The CentOS Project, CN=kojihub.cbs.centos.org/emailAddress=user-account-services@centos.org
+koji_hub_url: https://koji.centos.org/kojihub
+koji_web_url: https://koji.centos.org/koji
+koji_files_url: https://koji.centos.org/kojifiles
+koji_hub_secret: aoYvNQPWTb7BieCco1iljBqym # Don't forget to change this before deployment
+
+# TLS settings for crl
+# Where to retrieve the updated CRL file
+koji_hub_tls_crl_url: https://accounts.centos.org/ca/crl.pem
+# Our CA for tls auth
+koji_hub_cacert: fas_ca_cert-prod.crt
+koji_hub_tls_key: kojihub.centos.org.key
+koji_hub_tls_cert: kojihub.centos.org.crt
+
+# For https frontend
+koji_web_cacert: koji.centos.org-CAChain.crt
+koji_web_tls_key: koji.centos.org.key
+koji_web_tls_cert: koji.centos.org.crt
+
+# Authentication TLS vs Kerberos
+koji_auth_tls: True
+koji_auth_kerberos: False
+
+# Storage settings
+koji_mountpoint: /mnt/kojishare
+koji_nfs_path: nfs-host.domain.com:/exports/kojishare
+
+# Where to gather users/group membership from
+koji_fas_url:
+koji_fas_user:
+koji_fas_pass:
+
+# Do we need a local admin user on the hub itself ? 
+koji_admin_client: True
+koji_admin_user: admin
+koji_admin_pem: admin.pem 

@@ -1,0 +1,36 @@
+- name: Ensuring we have some nfs pkgs installed
+  yum:
+    name: nfs-utils
+    state: installed
+ 
+- name: koji store mount point exist
+  file:
+    path: "{{ koji_mountpoint }}"
+    state: directory
+
+- name: Ensuring we have nfs koji store mounted
+  mount:
+    path: "{{ koji_mountpoint }}"
+    src: "{{ koji_nfs_path }}"
+    fstype: nfs
+    state: mounted
+
+- name: Workaround for some hard-coded path in koji
+  file:
+    src: "{{ koji_mountpoint}}/koji"
+    dest: /mnt/koji
+    state: link
+
+- name: Ensuring we have default directories for koji storage
+  file:
+    path: "{{ koji_mountpoint }}/koji/{{ item }}"
+    state: directory
+    owner: apache
+    group: apache
+  with_items:
+    - packages
+    - repos
+    - work
+    - scratch
+
+    

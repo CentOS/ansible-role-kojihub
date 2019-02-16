@@ -1,0 +1,86 @@
+RewriteEngine on
+RewriteCond %{HTTPS} off
+RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R=302,L]
+RewriteRule  ^/$    /koji [R,L] 
+
+ Header always set X-Frame-Options "SAMEORIGIN"
+ Header always set X-Xss-Protection "1; mode=block"
+ Header always set X-Content-Type-Options "nosniff"
+ Header always set Referrer-Policy "same-origin"
+
+
+# Adding alias for /repos
+Alias /repos {{ koji_mountpoint }}/repos
+
+<Directory "{{ koji_mountpoint }}/repos">
+   Options Indexes FollowSymLinks
+    AllowOverride None
+    <IfVersion < 2.4>
+    Order allow,deny
+    Allow from all
+    </IfVersion>
+    <IfVersion >= 2.4>
+    IndexOptions FancyIndexing VersionSort NameWidth=* HTMLTable Charset=UTF-8
+    Require all granted
+    </IfVersion>
+</Directory>
+
+
+#We use wsgi by default
+Alias /koji "/usr/share/koji-web/scripts/wsgi_publisher.py"
+
+
+
+#(configuration goes in /etc/kojiweb/web.conf)
+
+<Directory "/usr/share/koji-web/scripts/">
+    Options ExecCGI
+    SetHandler wsgi-script
+    <IfVersion < 2.4>
+    Order allow,deny
+    Allow from all
+    </IfVersion>
+    <IfVersion >= 2.4>
+    Require all granted
+    </IfVersion>
+</Directory>
+
+{% if koji_auth_kerberos %}
+# uncomment this to enable authentication via Kerberos
+# <Location /koji/login>
+#     AuthType Kerberos
+#     AuthName "Koji Web UI"
+#     KrbMethodNegotiate on
+#     KrbMethodK5Passwd off
+#     KrbServiceName HTTP
+#     KrbAuthRealm EXAMPLE.COM
+#     Krb5Keytab /etc/httpd.keytab
+#     KrbSaveCredentials off
+#     Require valid-user
+#     ErrorDocument 401 /koji-static/errors/unauthorized.html
+# </Location>
+{% endif %}
+
+{% if koji_auth_tls %}
+# uncomment this to enable authentication via SSL client certificates
+ <Location /koji/login>
+     SSLVerifyClient require
+     SSLVerifyDepth  10
+     SSLOptions +StdEnvVars
+ </Location>
+{% endif %}
+
+Alias /koji-static/ "/usr/share/koji-web/static/"
+
+<Directory "/usr/share/koji-web/static/">
+    Options None
+    AllowOverride None
+    <IfVersion < 2.4>
+    Order allow,deny
+    Allow from all
+    </IfVersion>
+    <IfVersion >= 2.4>
+    Require all granted
+    </IfVersion>  
+</Directory>
+

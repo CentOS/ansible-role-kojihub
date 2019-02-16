@@ -1,0 +1,71 @@
+- include_role:
+    name: postgresql
+
+- name: Creating pgsql/koji db user
+  postgresql_user: 
+    name: "{{ koji_db_user }}" 
+    password: "{{ koji_db_pass }}"
+    role_attr_flags: "NOCREATEDB,NOSUPERUSER,NOCREATEROLE"
+  become_user: postgres
+
+- name: Ensuring we have pgsql DB for koji
+  postgresql_db: 
+    name: "{{ koji_db_name }}" 
+    owner: "{{ koji_db_user }}" 
+    encoding: UTF-8
+  become_user: postgres
+  register: koji_created_db
+
+- name: Finding the schema to load in DB
+  shell: find /usr/share/doc -iname schema.sql|grep koji
+  register: koji_sql_schema
+  when: koji_created_db is changed
+
+- name: Load initial schema for Koji DB if needed
+  postgresql_db:
+    name: "{{ koji_db_name }}"
+    target: "{{ koji_sql_schema.stdout }}"
+    owner: "{{ koji_db_user }}"
+    state: restore
+  become_user: postgres
+  when: koji_created_db is changed
+
+- name: Distributing init for koji admin and kojira users
+  template:
+    src: koji-pgsql-rights.sql.j2
+    dest: /var/tmp/koji-pgsql-rights.sql
+  when: koji_created_db is changed
+    
+
+- name: Creating default koji admin and kojira users in DB
+  postgresql_db:
+    name: "{{ koji_db_name }}"
+    target: /var/tmp/koji-pgsql-rights.sql
+    state: restore
+  become_user: postgres
+  when: koji_created_db is changed
+
+- name: Ensuring koji user has all rights on DB
+  postgresql_privs:
+    db: "{{ koji_db_name }}"
+    role: "{{ koji_db_user }}"
+    objs: ALL_IN_SCHEMA
+    privs: ALL
+    state: present
+    type: "{{ item }}"
+  become_user: postgres
+  with_items:
+    - table
+    - sequence
+
+- name: Ensuring koji user has all rights on DB
+  postgresql_privs:
+    db: "{{ koji_db_name }}"
+    type: database
+    privs: ALL
+    state: present
+    role: "{{ koji_db_user }}"
+  become_user: postgres
+
+
+

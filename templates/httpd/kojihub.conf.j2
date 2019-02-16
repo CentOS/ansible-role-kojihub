@@ -1,0 +1,58 @@
+# kojhub.conf - Managed by Ansible
+
+#
+# koji-hub is an xmlrpc interface to the Koji database
+#
+
+Alias /kojihub /usr/share/koji-hub/kojixmlrpc.py
+
+<Directory "/usr/share/koji-hub">
+    Options ExecCGI
+    SetHandler wsgi-script
+    <IfVersion < 2.4>
+    Order allow,deny
+    Allow from all
+    </IfVersion>
+    <IfVersion >= 2.4>
+    Require all granted
+    </IfVersion>
+
+</Directory>
+
+# Also serve /mnt/koji
+Alias /kojifiles "{{ koji_mountpoint }}/koji"
+
+<Directory "{{ koji_mountpoint }}/koji">
+    Options Indexes FollowSymLinks
+    AllowOverride None
+    <IfVersion < 2.4>
+    Order allow,deny
+    Allow from all
+    </IfVersion>
+    <IfVersion >= 2.4>
+    Require all granted
+    </IfVersion>
+</Directory>
+
+Alias /externalrepos "{{ koji_mountpoint }}/externalrepos"
+<Directory "{{ koji_mountpoint }}/externalrepos">
+    Options Indexes
+    AllowOverride None
+    <IfVersion < 2.4>
+    Order allow,deny
+    Allow from 172.22.0.0/16
+    </IfVersion>
+    <IfVersion >= 2.4>
+    Require ip 172.22.0.0/16
+    </IfVersion>
+</Directory>
+
+
+# uncomment this to enable authentication via SSL client certificates
+<Location /kojihub/ssllogin>
+        SSLVerifyClient require
+        SSLVerifyDepth  10
+        SSLOptions +StdEnvVars
+</Location>
+
+

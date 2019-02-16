@@ -1,0 +1,40 @@
+- name: Specific PKI dir for koji
+  file:
+    path: /etc/pki/koji
+    state: directory
+
+- name: Distributing some x509 files for kojihub
+  copy:
+    src: "{{ pkistore }}/{{ item }}"
+    dest: "/etc/pki/koji/{{ item }}"
+  with_items:
+    - "{{ koji_hub_cacert }}"
+    - "{{ koji_hub_tls_key }}"
+    - "{{ koji_hub_tls_cert }}"
+  notify:
+    - restart_httpd
+
+- name: TLS certs for kojiweb
+  copy:
+    src: "{{ pkistore }}/{{ item }}"
+    dest: "/etc/pki/tls/certs/{{ item }}"
+  with_items:
+    - "{{ koji_web_tls_cert }}"
+    - "{{ koji_web_cacert }}"
+  notify:
+    - restart_httpd
+
+- name: TLS keys for kojiweb
+  copy:
+    src: "{{ pkistore }}/{{ item }}"
+    dest: "/etc/pki/tls/private/{{ item }}"
+  with_items:
+    - "{{ koji_web_tls_key }}"
+  notify:
+    - restart_httpd
+
+- name: Ensuring we have initial crl 
+  get_url:
+    url: "{{ koji_hub_tls_crl_url }}"
+    dest: /etc/pki/koji/crl.pem
+

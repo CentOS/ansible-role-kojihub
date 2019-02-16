@@ -1,0 +1,51 @@
+# This file is managed by Ansible
+<VirtualHost _default_:443>
+
+RewriteEngine on
+RewriteRule  ^/$    /koji [R,L] 
+
+ Header always set Strict-Transport-Security "max-age=31536000"  
+ Header always set X-Frame-Options "SAMEORIGIN"
+ Header always set X-Xss-Protection "1; mode=block"
+ Header always set X-Content-Type-Options "nosniff"
+ Header always set Referrer-Policy "same-origin"
+
+
+ErrorLog logs/ssl_error_log
+TransferLog logs/ssl_access_log
+LogLevel warn
+
+SSLEngine on
+SSLHonorCipherOrder on
+
+SSLProtocol all -SSLv2 -SSLv3
+
+SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
+
+# Here are the Koji certs/keys/cacert
+
+SSLCertificateFile /etc/pki/tls/certs/{{ koji_web_tls_cert }}
+SSLCertificateKeyFile /etc/pki/tls/private/{{ koji_web_tls_key }}
+SSLCertificateChainFile /etc/pki/tls/certs/{{ koji_web_cacert }}
+
+SSLCACertificateFile /etc/pki/koji/{{ koji_hub_cacert }}
+SSLCARevocationFile /etc/pki/koji/crl.pem
+
+# Needed to verify the koji client certificates
+#SSLVerifyClient require
+#SSLVerifyDepth  10
+
+<Files ~ "\.(cgi|shtml|phtml|php3?)$">
+    SSLOptions +StdEnvVars
+</Files>
+<Directory "/var/www/cgi-bin">
+    SSLOptions +StdEnvVars
+</Directory>
+
+SetEnvIf User-Agent ".*MSIE.*" \
+         nokeepalive ssl-unclean-shutdown \
+         downgrade-1.0 force-response-1.0
+
+CustomLog logs/ssl_request_log \
+          "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+</VirtualHost>                              
