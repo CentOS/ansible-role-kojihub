@@ -56,3 +56,5 @@
   when: koji_kojira
 - include_tasks: mash.yml
   when: koji_mash
+- include_tasks: users-sync.yml
+  when: koji_fas_sync

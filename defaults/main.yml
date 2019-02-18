@@ -45,8 +45,10 @@ koji_mash: True
 koji_mountpoint: /mnt/kojishare
 koji_nfs_path: nfs-host.domain.com:/exports/kojishare
 
+# Do we want to grant permissions based on group membership from FAS/ACO
+koji_fas_sync: True
 # Where to gather users/group membership from
-koji_fas_url:
+koji_fas_url: https://accounts.centos.org
 koji_fas_user:
 koji_fas_pass:
 

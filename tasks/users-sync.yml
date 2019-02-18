@@ -1,0 +1,26 @@
+# This task will allow koji to grab users from FAS/ACO and grant/remove build rights based on group membership
+
+- name: Installing required python pkgs
+  yum:
+    name: python-centos
+    state: installed
+
+- name: Ensuring we have a dir for bsadmin tool
+  file:
+    path: /etc/bsadmin
+    state: directory
+    owner: "{{ koji_admin_user }}"
+    mode: 0750
+
+- name: Configuring sync tool
+  template:
+    src: bsadmin.conf.j2
+    dest: /etc/bsadmin/bsadmin.conf
+
+- name: Cron job to sync FAS/Koji
+  cron:
+    name: "CentOS ACO-koji sync"
+    job: "/opt/cbs-tools/script/cbs-fas-sync.sh > /dev/null 2>&1"
+    minute: "*/7"
+    user: "{{ koji_admin_user }}"
+    
