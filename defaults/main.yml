@@ -33,6 +33,14 @@ koji_web_tls_cert: koji.centos.org.crt
 koji_auth_tls: True
 koji_auth_kerberos: False
 
+# Do we want to also run kojira
+koji_kojira: True
+koji_kojira_tls_pem: kojira.pem
+
+# Do we want to also run mash
+koji_mash: True
+
+
 # Storage settings
 koji_mountpoint: /mnt/kojishare
 koji_nfs_path: nfs-host.domain.com:/exports/kojishare

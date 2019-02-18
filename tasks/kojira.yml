@@ -1,0 +1,19 @@
+- name: Ensuring we have kojira tls pem for auth
+  copy:
+    src: "{{ pkistore }}/koji/{{ koji_kojira_tls_pem }}"
+    dest: "/etc/pki/koji/{{ koji_kojira_tls_pem}}"
+
+- name: Distributing kojira conf file
+  template:
+    src: kojira/kojira.conf.j2
+    dest: /etc/kojira/kojira.conf
+  notify:
+    - restart_kojira
+
+- name: Service kojira is running
+  service:
+    name: kojira
+    state: started
+    enabled: yes
+
+

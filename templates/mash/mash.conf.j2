@@ -1,0 +1,9 @@
+# This file is managed by Ansible. Don't modify it
+[defaults]
+configdir = /etc/mash
+buildhost = {{ koji_hub_url }}
+repodir = file:///mnt/koji
+use_sqlite = True
+use_repoview = True
+compress_type = compat
+

@@ -51,3 +51,8 @@
 
 - include_tasks: koji-admin.yml
   when: koji_admin_client
+
+- include_tasks: kojira.yml
+  when: koji_kojira
+- include_tasks: mash.yml
+  when: koji_mash
