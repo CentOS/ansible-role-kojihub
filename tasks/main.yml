@@ -19,6 +19,7 @@
 - include_tasks: storage.yml
 - include_tasks: tls.yml
 - include_tasks: postgresql.yml
+- include_tasks: selinux.yml
 
 - name: Configuring kojihub/web
   template:

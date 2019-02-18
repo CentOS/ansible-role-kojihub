@@ -1,0 +1,9 @@
+- name: Ensuring we have some booleans turned on for kojihub/web
+  seboolean:
+    name: "{{ item }}"
+    persistent: yes
+    state: yes
+  with_items:
+    - httpd_can_network_connect_db
+    - allow_httpd_anon_write
+    - httpd_use_nfs
