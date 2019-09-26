@@ -15,9 +15,16 @@
     fstype: nfs
     state: mounted
 
+- name: Ensuring we have a koji directory there
+  file:
+    path: "{{ koji_mountpoint }}/koji"
+    state: directory
+    owner: apache
+    group: apache
+
 - name: Workaround for some hard-coded path in koji
   file:
-    src: "{{ koji_mountpoint}}/koji"
+    src: "{{ koji_mountpoint }}/koji"
     dest: /mnt/koji
     state: link
 

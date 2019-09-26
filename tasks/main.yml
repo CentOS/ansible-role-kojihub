@@ -3,6 +3,12 @@
   vars:
     - httpd_tls: True
 
+- name: Add the kojihub repo if needed
+  template:
+    src: kojihub.repo.j2
+    dest: /etc/yum.repos.d/kojihub.repo
+  when: kojid_kojihub_repo
+
 - name: Ensuring we have some pkgs installed
   yum:
     name: "{{ item }}"

@@ -1,5 +1,9 @@
 # Default variables for kojihub role
 
+# Do we need to use specific repo to deploy newer/specific koji pkgs
+kojid_kojihub_repo: False
+kojid_kojihub_repo_host: http://internal.repo.org/
+
 # Database settings
 koji_db_name: koji
 koji_db_user: koji
