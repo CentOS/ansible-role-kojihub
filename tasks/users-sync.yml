@@ -20,7 +20,7 @@
 - name: Cron job to sync FAS/Koji
   cron:
     name: "CentOS ACO-koji sync"
-    job: "/opt/cbs-tools/script/cbs-fas-sync.sh > /dev/null 2>&1"
+    job: "/opt/cbs-tools/scripts/cbs-fas-sync.sh > /dev/null 2>&1"
     minute: "*/7"
     user: "{{ koji_admin_user }}"
     

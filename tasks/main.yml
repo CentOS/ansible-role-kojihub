@@ -20,7 +20,8 @@
     - koji-web
     - koji-utils
     - git
-    - gnupg2 
+    - gnupg2
+    - repoview
 
 - include_tasks: storage.yml
 - include_tasks: tls.yml

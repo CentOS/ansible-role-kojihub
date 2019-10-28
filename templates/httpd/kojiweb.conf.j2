@@ -15,6 +15,7 @@ Alias /repos {{ koji_mountpoint }}/repos
 <Directory "{{ koji_mountpoint }}/repos">
    Options Indexes FollowSymLinks
     AllowOverride None
+    HeaderName /header/header.html
     <IfVersion < 2.4>
     Order allow,deny
     Allow from all

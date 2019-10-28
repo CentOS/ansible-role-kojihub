@@ -48,7 +48,7 @@
 - name: Cron job to rebuild repos every day
   cron:
     name: "CentOS Koji regen repo task"
-    job: "/opt/cbs-tools/script/regen_build_repos.sh > /dev/null 2>&1"
+    job: "/opt/cbs-tools/scripts/regen_build_repos.sh > /dev/null 2>&1"
     minute: "5"
     hour: "3"
     user: "{{ koji_admin_user }}"

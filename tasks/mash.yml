@@ -8,15 +8,25 @@
     path: "{{ item }}"
     owner: "{{ koji_admin_user }}"
     state: directory
+    recurse: True
     mode: 0755
   with_items:
     - /etc/mash
     - /var/log/mash
     - /var/tmp/mash
     - /var/cache/cbs-mash
+    - /mnt/kojishare/repos
 
 - name: Configuring mash
   template:
     src: mash/mash.conf.j2
     dest: /etc/mash/mash.conf
     owner: "{{ koji_admin_user }}"
+
+- name: Koji Mash run cron
+  cron:
+    name: "Koji mash run"
+    job: "/opt/cbs-tools/scripts/mash_run.sh > /dev/null 2>&1"
+    minute: "*/10"
+    user: "{{ koji_admin_user }}"
+
