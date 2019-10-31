@@ -8,7 +8,6 @@
     path: "{{ item }}"
     owner: "{{ koji_admin_user }}"
     state: directory
-    recurse: True
     mode: 0755
   with_items:
     - /etc/mash
