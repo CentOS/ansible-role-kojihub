@@ -2,7 +2,9 @@
 
 # Do we need to use specific repo to deploy newer/specific koji pkgs
 kojid_kojihub_repo: False
-kojid_kojihub_repo_host: http://internal.repo.org/
+kojid_kojihub_repo_url: http://internal.repo.org/builder/$basearch/
+kojid_kojihub_repo_gpgcheck: False
+kojid_kojihub_repo_gpgkey: RPM-GPG-KEY-CentOS-Infra
 
 # Database settings
 koji_db_name: koji

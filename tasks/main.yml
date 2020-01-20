@@ -8,6 +8,17 @@
     src: kojihub.repo.j2
     dest: /etc/yum.repos.d/kojihub.repo
   when: kojid_kojihub_repo
+  tags:
+    - repo
+
+- name: Adding repo gpg key if needed
+  copy: 
+    src: "files/{{ kojid_kojihub_repo_gpgkey }}"
+    dest: "/etc/pki/rpm-gpg/{{ kojid_kojihub_repo_gpgkey }}"
+  when: kojid_kojihub_repo and kojid_kojihub_repo_gpgcheck  
+  tags:
+    - repo
+
 
 - name: Ensuring we have some pkgs installed
   yum:

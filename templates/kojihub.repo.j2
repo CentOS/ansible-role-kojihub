@@ -1,5 +1,11 @@
 [c7-kojihub]
 name = Koji Builder tools
-baseurl = {{ kojid_kojihub_repo_host }}/kojihub/$basearch/
+baseurl = {{ kojid_kojihub_repo_url }}
 enabled=1
+{% if kojid_kojihub_repo_gpgcheck %}
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/{{ kojid_kojihub_repo_gpgkey }}
+{% else %}
 gpgcheck=0
+{% endif %}
+
