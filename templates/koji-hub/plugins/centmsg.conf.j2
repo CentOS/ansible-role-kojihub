@@ -1,0 +1,11 @@
+[centmsg]
+host = {{ koji_hub_plugin_mqtt_host }}
+port = 8883
+tls_cert = /etc/pki/koji/{{ koji_admin_pem }}
+tls_key = /etc/pki/koji/{{ koji_admin_pem }}
+ca_cert = /etc/pki/koji/{{ koji_hub_cacert }}
+topic = {{ koji_hub_plugin_mqtt_topic }}
+tls_insecure = False
+tls_version = 2
+exclude_tags = {% for tag in koji_hub_plugin_mqtt_excluded_tags %}{{ tag }}{%- if not loop.last -%},{% endif %}{% endfor %}
+

@@ -1,0 +1,15 @@
+- name: Deploying enabled plugins
+  copy:
+    src: "plugins/{{ item }}.py"
+    dest: "/usr/lib/koji-hub-plugins/{{ item }}.py"
+  with_items: "{{ koji_hub_plugins_list }}"
+  tags:
+    - plugins
+
+- name: Configuring enabled plugins
+  template:
+    src: "koji-hub/plugins/{{ item }}.conf.j2"
+    dest: "/etc/koji-hub/plugins/{{ item }}.conf"
+  with_items: "{{ koji_hub_plugins_list }}"
+  tags:
+    - plugins

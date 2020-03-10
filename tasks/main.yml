@@ -19,7 +19,6 @@
   tags:
     - repo
 
-
 - name: Ensuring we have some pkgs installed
   yum:
     name: "{{ item }}"
@@ -33,6 +32,7 @@
     - git
     - gnupg2
     - repoview
+    - python-paho-mqtt
 
 - include_tasks: storage.yml
 - include_tasks: tls.yml
@@ -70,6 +70,9 @@
 
 - include_tasks: koji-admin.yml
   when: koji_admin_client
+- include_tasks : plugins.yml
+  tags:
+    - plugins
 
 - include_tasks: kojira.yml
   when: koji_kojira
