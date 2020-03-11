@@ -4,7 +4,7 @@
 #                                                                              
 # License: GPLv2                                                               
 # Authors:                                                                     
-#     Alex Iribarren <alex.iribarren@cern.ch> (original script)                
+#     Alex (dot) Iribarren (at) cern (dot) ch (original script)                
 #     Thomas (dot) Oulevey (at) cern (dot) ch (mqtt version)
  
 import koji
