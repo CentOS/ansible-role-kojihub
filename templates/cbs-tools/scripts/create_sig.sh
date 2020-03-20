@@ -116,6 +116,10 @@ do
         ;;
         7) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64"; DEFAULT_DISTTAG="el7.centos"
         ;;
+        8) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64 aarch64 ppc64le"; DEFAULT_DISTTAG="el8"
+        ;;
+        8s) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64 aarch64 ppc64le"; DEFAULT_DISTTAG="el8s"
+        ;;
         *) echo "It seems your distribution el${DIST} is unsupported" && continue
         ;;
     esac
@@ -123,14 +127,19 @@ do
     $KOJI list-tags | grep buildsys${DIST} &> /dev/null
     [ $? -gt 0 ] && echo " -> [ERROR] Something is wrong buildsys${DIST} tag not found." && continue
 
-    $KOJI list-external-repos | grep ^centos${DIST}-extras &> /dev/null
-    [ $? -gt 0 ] && echo " -> [ERROR] centos${DIST}-extras external repo not configured in koji." && continue
+    if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" ]]
+    then
+        $KOJI list-external-repos | grep ^centos${DIST}-baseos &> /dev/null
+        [ $? -gt 0 ] && echo " -> [ERROR] centos${DIST}-baseos external repo not configured in koji." && continue
+    else
+        $KOJI list-external-repos | grep ^centos${DIST}-os &> /dev/null
+        [ $? -gt 0 ] && echo " -> [ERROR] centos${DIST}-os external repo not configured in koji." && continue
+        $KOJI list-external-repos | grep ^centos${DIST}-updates &> /dev/null
+        [ $? -gt 0 ] && echo " -> [ERROR] centos${DIST}-updates external repo not configured in koji." && continue
+        $KOJI list-external-repos | grep ^centos${DIST}-extras &> /dev/null
+        [ $? -gt 0 ] && echo " -> [ERROR] centos${DIST}-extras external repo not configured in koji." && continue
+    fi
 
-    $KOJI list-external-repos | grep ^centos${DIST}-os &> /dev/null
-    [ $? -gt 0 ] && echo " -> [ERROR] centos${DIST}-os external repo not configured in koji." && continue
-
-    $KOJI list-external-repos | grep ^centos${DIST}-updates &> /dev/null
-    [ $? -gt 0 ] && echo " -> [ERROR] centos${DIST}-updates external repo not configured in koji." && continue
 
     for SIG in $SIGS
     do
@@ -149,10 +158,10 @@ do
             P_SIG="${SIG}-${PROJECT}"
             # Add sig project options here FIXME add a command line option for oneshot buildroot fixes.
             case ${PROJECT} in
-                openstack)
-                    echo "Reading ${PROJECT} additional configs..."
-                    BUILDROOT_PKGS_EXTRAS="openstack-macros"
-                    ;;
+                #openstack)
+                #    echo "Reading ${PROJECT} additional configs..."
+                #    BUILDROOT_PKGS_EXTRAS="openstack-macros"
+                #    ;;
                 *)
                     BUILDROOT_PKGS_EXTRAS=""
                 ;;
@@ -201,16 +210,31 @@ do
                     $KOJI add-tag --arches "$ARCHES" $R_SIG-$TAG-build
                     $KOJI add-target $R_SIG-$TAG $R_SIG-$TAG-build $R_SIG-candidate
                     # For external repo priorites are increased by 5, Priority 5
-                    if [ "x$DIST" == "x7" ]
+                    if [[ "x$DIST" == "x7" || "x$DIST" == "x8" || "x$DIST" == "x8s" ]]
                     then
-                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-cr
+			if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" ]]
+                        then
+                            $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-cr --mode bare
+                        else
+                            $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-cr
+                        fi
                     fi
-                    $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-extras
-                    $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-updates
-                    $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-os
+                    if [[ "x$DIST" == "x8" ||  "x$DIST" == "x8s" ]]
+                    then
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-extras --mode bare
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-powertools --mode bare
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-appstream --mode bare
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-baseos --mode bare
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.new_chroot=1"
+                    else
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-extras
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-updates
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-os
+                    fi
                     # START bootstrap
                     if ( $optionb )
-                                        then
+                    then
                         # START bootstrap for sclo
                         if [ "x${SIGNAME}" == "xsclo" ]
                                                 then
@@ -235,7 +259,7 @@ do
                         source $CONFIG_PATH/$SIGNAME/$PROJECT/config.sh
                     else
                         BUILDROOT_DEFAULT="curl bash bzip2 coreutils cpio diffutils redhat-release findutils gawk gcc gcc-c++ grep gzip info make patch redhat-rpm-config rpm-build sed shadow-utils tar unzip util-linux-ng which buildsys-tools tar"
-                                                COMMON_INHERITANCE=true
+                        COMMON_INHERITANCE=true
                     fi
                     if ( $optionc )
                     then
@@ -245,7 +269,12 @@ do
                         $KOJI add-group-pkg $R_SIG-$TAG-build build $BUILDROOT_DEFAULT buildsys-macros-$REALTAG $BUILDROOT_PKGS_EXTRAS
                         $KOJI add-group-pkg $R_SIG-$TAG-build srpm-build $BUILDROOT_DEFAULT buildsys-macros-$REALTAG $BUILDROOT_PKGS_EXTRAS
                     fi
-                    $KOJI add-tag-inheritance --priority 5 $R_SIG-$TAG-build buildsys${DIST}
+                    if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" ]]
+                    then
+                        $KOJI add-tag-inheritance --priority 5 $R_SIG-$TAG-build buildsys${DIST}-release
+                    else
+                        $KOJI add-tag-inheritance --priority 5 $R_SIG-$TAG-build buildsys${DIST}
+                    fi
                     $KOJI add-tag-inheritance --priority 10 $R_SIG-$TAG-build $R_SIG-candidate
                     # If -common exists for the project add it
                     if [ "x$RELEASE" != "xcommon" ] && [ "x$COMMON_INHERITANCE" != "xfalse" ]
@@ -260,7 +289,12 @@ do
                         [ $? -eq 0 ] && echo "Adding $SIG-common-candidate as inheritance" && $KOJI add-tag-inheritance --priority 20 $R_SIG-$TAG-build $SIG-common-candidate
                     fi
                     # Check if disttag has corresponding buildsys-macros-disttag
-                    $KOJI list-tagged buildsys${DIST} | grep buildsys-macros-$REALTAG &> /dev/null
+                    if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" ]]
+                    then
+                        $KOJI list-tagged buildsys${DIST}-release | grep buildsys-macros-$REALTAG &> /dev/null
+                    else
+                        $KOJI list-tagged buildsys${DIST} | grep buildsys-macros-$REALTAG &> /dev/null
+                    fi
                     if [ $? -gt 0 ]
                     then
                         if [ "x$REALTAG" != "x$DEFAULT_DISTTAG" ]
