@@ -44,7 +44,7 @@ koji_kojira: True
 koji_kojira_tls_pem: kojira.pem
 
 # Do we want to also run mash
-koji_mash: True
+koji_mash: False
 
 
 # Storage settings
