@@ -44,6 +44,8 @@
     - regen_all_buildroots.sh
     - cbs-fas-sync.sh
     - regen_build_repos.sh
+  tags:
+    - cbs-tools
 
 - name: Cron job to rebuild repos every day
   cron:

@@ -179,11 +179,11 @@ do
             do
                 R_SIG="${P_SIG}-${RELEASE}"
                 $KOJI list-tags | grep $R_SIG-candidate &> /dev/null
-                [ $? -gt 0 ] && echo "Creating tag  : ${R_SIG}-candidate" && $KOJI add-tag $R_SIG-candidate && $KOJI edit-tag $R_SIG-candidate --perm=build-${SIGNAME}
+                [ $? -gt 0 ] && echo "Creating tag  : ${R_SIG}-candidate" && $KOJI add-tag $R_SIG-candidate && $KOJI edit-tag $R_SIG-candidate --perm=build-${SIGNAME} --arches "${ARCHES}"
                 $KOJI list-tags | grep $R_SIG-testing &> /dev/null
-                [ $? -gt 0 ] && echo "Creating tag  : ${R_SIG}-testing" && $KOJI add-tag $R_SIG-testing && $KOJI edit-tag $R_SIG-testing --perm=build-${SIGNAME}
+                [ $? -gt 0 ] && echo "Creating tag  : ${R_SIG}-testing" && $KOJI add-tag $R_SIG-testing && $KOJI edit-tag $R_SIG-testing --perm=build-${SIGNAME} --arches "${ARCHES}"
                 $KOJI list-tags | grep $R_SIG-release &> /dev/null
-                [ $? -gt 0 ] && echo "Creating tag  : ${R_SIG}-release" && $KOJI add-tag $R_SIG-release && $KOJI edit-tag $R_SIG-release --perm=build-${SIGNAME}
+                [ $? -gt 0 ] && echo "Creating tag  : ${R_SIG}-release" && $KOJI add-tag $R_SIG-release && $KOJI edit-tag $R_SIG-release --perm=build-${SIGNAME} --arches "${ARCHES}"
 
                 for TAG in $TAGS
                 do
