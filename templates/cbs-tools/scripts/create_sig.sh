@@ -11,11 +11,11 @@ OPTIONS:
    -a   ARCHES                   : Force arches e.g : "x86_64","aarch64 i686", etc...
    -b                            : Enable non public bootstrap repo (SCLO SIG only)
    -c   COLLECTION               : Enable collection in the buildroot e.g : mariadb100
-   -d   DISTRIBUTION             : 5 6 7
+   -d   DISTRIBUTION             : 5 6 7 8 8s
    -p   SIG PROJECT NAME         : cloud6-<openstack>, sclo-<mariadb100>, etc...
    -r   SIG PROJECT RELEASE NAME : cloud6-openstack-<juno>
    -s   SIG NAME                 : cloud
-   -t   DISTTAGS                 : "el7 el7.centos el7_0"
+   -t   DISTTAGS                 : el7 el7.centos el8_0 el8s
    -x                            : delete old -build tag and then recreate.
 EOF
 }
