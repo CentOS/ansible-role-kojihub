@@ -36,6 +36,10 @@
 
 - include_tasks: storage.yml
 - include_tasks: tls.yml
+  tags:
+    - tls
+    - pki
+
 - include_tasks: postgresql.yml
 - include_tasks: selinux.yml
 
