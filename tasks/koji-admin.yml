@@ -13,11 +13,13 @@
   template:
     src: koji-client-config.j2
     dest: "/home/{{ koji_admin_user}}/.koji/config"
-
+    owner: "{{ koji_admin_user }}"
+    
 - name: Copy TLS pem files for koji admin user
   copy:
     src: "{{ pkistore }}/koji/{{ koji_admin_pem }}"
     dest: "/etc/pki/koji/{{ koji_admin_pem }}"
+    owner: "{{ koji_admin_user }}"
 
 - name: Ensuring we have scripts directory
   file:

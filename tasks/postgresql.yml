@@ -34,6 +34,7 @@
   template:
     src: koji-pgsql-rights.sql.j2
     dest: /var/tmp/koji-pgsql-rights.sql
+    mode: 0644
   when: koji_created_db is changed
     
 

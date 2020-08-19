@@ -2,11 +2,13 @@
   copy:
     src: "{{ pkistore }}/koji/{{ koji_kojira_tls_pem }}"
     dest: "/etc/pki/koji/{{ koji_kojira_tls_pem}}"
+    mode: 0644
 
 - name: Distributing kojira conf file
   template:
     src: kojira/kojira.conf.j2
     dest: /etc/kojira/kojira.conf
+    mode: 0644
   notify:
     - restart_kojira
 

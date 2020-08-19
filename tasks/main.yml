@@ -7,6 +7,7 @@
   template:
     src: kojihub.repo.j2
     dest: /etc/yum.repos.d/kojihub.repo
+    mode: 0644
   when: kojid_kojihub_repo
   tags:
     - repo
@@ -47,6 +48,7 @@
   template:
     src: "{{ item }}.j2"
     dest: "/etc/{{ item }}"
+    mode: 0644
   with_items:
     - koji-hub/hub.conf
     - kojiweb/web.conf
@@ -64,6 +66,7 @@
   template:
     src: "httpd/{{ item }}.j2"
     dest: "/etc/httpd/conf.d/{{ item }}"
+    mode: 0644
   with_items:
     - ssl-koji.conf
     - kojihub.conf

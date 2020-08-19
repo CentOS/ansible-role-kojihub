@@ -16,6 +16,7 @@
   template:
     src: bsadmin.conf.j2
     dest: /etc/bsadmin/bsadmin.conf
+    mode: 0644
 
 - name: Cron job to sync FAS/Koji
   cron:

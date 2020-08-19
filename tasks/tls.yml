@@ -8,6 +8,7 @@
       copy:
         src: "{{ pkistore }}/{{ item }}"
         dest: "/etc/pki/koji/{{ item }}"
+        mode: 0644
       with_items:
         - "{{ koji_hub_cacert }}"
         - "{{ koji_hub_tls_key }}"
@@ -19,6 +20,7 @@
       copy:
         src: "{{ pkistore }}/{{ item }}"
         dest: "/etc/pki/tls/certs/{{ item }}"
+        mode: 0644
       with_items:
         - "{{ koji_web_tls_cert }}"
         - "{{ koji_web_cacert }}"
@@ -29,6 +31,7 @@
       copy:
         src: "{{ pkistore }}/{{ item }}"
         dest: "/etc/pki/tls/private/{{ item }}"
+        mode: 0644
       with_items:
         - "{{ koji_web_tls_key }}"
       notify:
