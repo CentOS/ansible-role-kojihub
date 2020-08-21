@@ -1,0 +1,1 @@
+BUILDROOT_DEFAULT="go-srpm-macros bash bzip2 coreutils cpio diffutils redhat-release findutils gawk gcc gcc-c++ grep gzip info make patch redhat-rpm-config rpm-build sed unzip util-linux-ng git which buildsys-tools xz"
