@@ -212,7 +212,7 @@ do
                     # For external repo priorites are increased by 5, Priority 5
                     if [[ "x$DIST" == "x7" || "x$DIST" == "x8" || "x$DIST" == "x8s" ]]
                     then
-			if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" ]]
+			            if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" ]]
                         then
                             $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-cr --mode bare
                         else
@@ -221,6 +221,10 @@ do
                     fi
                     if [[ "x$DIST" == "x8" ||  "x$DIST" == "x8s" ]]
                     then
+                        if ( $HA_REPO_ENABLED )
+                        then
+                            $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-ha --mode bare
+                        fi
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-extras --mode bare
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-powertools --mode bare
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-appstream --mode bare
@@ -237,7 +241,7 @@ do
                     then
                         # START bootstrap for sclo
                         if [ "x${SIGNAME}" == "xsclo" ]
-                                                then
+                            then
                             # Priority 15
                             $KOJI add-external-repo --tag=$R_SIG-$TAG-build sclo${DIST}-bootstrap
                         fi
