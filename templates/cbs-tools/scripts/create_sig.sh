@@ -164,7 +164,8 @@ do
                 #    ;;
                 *)
                     BUILDROOT_PKGS_EXTRAS=""
-                ;;
+                    HA_REPO_ENABLED=false
+                    ;;
             esac
 
             # Check for -common
