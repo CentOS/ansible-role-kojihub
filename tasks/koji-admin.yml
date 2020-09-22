@@ -20,6 +20,7 @@
     src: "{{ pkistore }}/koji/{{ koji_admin_pem }}"
     dest: "/etc/pki/koji/{{ koji_admin_pem }}"
     owner: "{{ koji_admin_user }}"
+    mode: 0644
 
 - name: Ensuring we have scripts directory
   file:
