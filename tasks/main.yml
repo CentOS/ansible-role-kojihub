@@ -22,18 +22,8 @@
 
 - name: Ensuring we have some pkgs installed
   yum:
-    name: "{{ item }}"
+    name: ['koji', 'koji-hub', 'koji-hub-plugins', 'koji-web', 'koji-utils', 'git', 'gnupg2', 'repoview', 'python-paho-mqtt']
     state: latest
-  with_items:
-    - koji
-    - koji-hub
-    - koji-hub-plugins
-    - koji-web
-    - koji-utils
-    - git
-    - gnupg2
-    - repoview
-    - python-paho-mqtt
 
 - include_tasks: storage.yml
 - include_tasks: tls.yml
