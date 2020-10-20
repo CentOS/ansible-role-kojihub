@@ -1,3 +1,22 @@
+- name: Distributing init kojira user
+  template:
+    src: kojira/kojira-pgsql-rights.sql.j2
+    dest: /etc/kojira/kojira-pgsql-rights.sql
+    mode: 0644
+  register: kojira_user_sql
+  tags:
+    - kojira
+
+- name: Creating default kojira user in DB
+  postgresql_db:
+    name: "{{ koji_db_name }}"
+    target: /etc/kojira/kojira-pgsql-rights.sql
+    state: restore
+  become_user: postgres
+  when: kojira_user_sql is changed
+  tags:
+    - kojira
+
 - name: Ensuring we have kojira tls pem for auth
   copy:
     src: "{{ pkistore }}/koji/{{ koji_kojira_tls_pem }}"

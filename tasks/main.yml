@@ -76,6 +76,9 @@
 
 - include_tasks: kojira.yml
   when: koji_kojira
+  tags:
+    - kojira
+
 - include_tasks: mash.yml
   when: koji_mash
 - include_tasks: users-sync.yml

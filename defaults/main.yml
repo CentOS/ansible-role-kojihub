@@ -41,7 +41,8 @@ koji_auth_kerberos: False
 
 # Do we want to also run kojira
 koji_kojira: True
-koji_kojira_tls_pem: kojira.pem
+koji_kojira_user: kojira
+koji_kojira_tls_pem: kojira.pem # CN has to match with koji_kojira_user defined 
 
 # Do we want to also run mash
 koji_mash: False
