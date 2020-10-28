@@ -27,6 +27,7 @@
     src: "{{ koji_mountpoint }}/koji"
     dest: /mnt/koji
     state: link
+  when: koji_mnt_symlink_workaround
 
 - name: Ensuring we have default directories for koji storage
   file:
