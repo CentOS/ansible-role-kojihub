@@ -43,6 +43,7 @@
     - external_repos_updates.sh
     - fas_perms_to_koji.py
     - koji-group-sync.py
+    - fasjson-group-sync
     - mash_run.sh
     - regen_all_buildroots.sh
     - cbs-fas-sync.sh

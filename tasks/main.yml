@@ -81,8 +81,10 @@
 
 - include_tasks: mash.yml
   when: koji_mash
+
 - include_tasks: users-sync.yml
-  when: koji_fas_sync
+  when: koji_fas_sync or koji_fasjson_sync
+ 
 - include_tasks: monitoring.yml 
   tags:
     - monitoring

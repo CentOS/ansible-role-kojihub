@@ -9,7 +9,11 @@
 
 PATH=$PATH:/usr/local/bin:/sbin:/usr/sbin/:/usr/bin/
 
+{% if koji_fas_sync %}
 fas_fetch_script="/opt/cbs-tools/scripts/koji-group-sync.py"
+{% elif koji_fasjson_sync %}
+fas_fetch_script="/opt/cbs-tools/scripts/fasjson-group-sync"
+{% endif %}
 koji_config_script="/opt/cbs-tools/scripts/fas_perms_to_koji.py"
 logfile="/var/tmp/cbs-fas.log"
 groups_to_exclude="hpv"

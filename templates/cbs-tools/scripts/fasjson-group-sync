@@ -1,0 +1,35 @@
+#!/usr/bin/python
+import sys
+import requests
+import json
+import os
+from requests_gssapi import HTTPSPNEGOAuth
+
+fasjson_base_url = "{{ koji_fasjson_url }}"
+fasjson_keytab = "{{ koji_fasjson_keytab }}"
+fasjson_full_url = '%s/v1/groups/' % (fasjson_base_url)
+os.environ['KRB5_CLIENT_KTNAME'] = '/etc/bsadmin/{{ koji_fasjson_keytab }}'
+local_group_file = '/etc/bsadmin/groups'
+
+if __name__ == '__main__':
+
+  try:
+    gssapi_auth = HTTPSPNEGOAuth(opportunistic_auth=True,mutual_authentication='OPTIONAL')
+    results = requests.get(fasjson_full_url, auth=gssapi_auth) 
+    json_body = json.loads(results.text)
+    fo = open(local_group_file,"wb")
+    for group in json_body['result']:
+      if group['groupname'].startswith('sig-'):
+        group_members_url = '%s/v1/groups/%s/members/' % (fasjson_base_url, group['groupname'])
+        group_members = requests.get(group_members_url, auth=gssapi_auth)
+        group_members_json = json.loads(group_members.text)
+        userlist = []
+        for user in group_members_json['result']:
+          userlist.append(user['username'])
+        string = '%s:%s \n' % (group['groupname'] , ','.join(userlist))
+        fo.write (string)
+    fo.close()
+
+  except:
+    sys.exit(1)
+

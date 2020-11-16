@@ -60,6 +60,13 @@ koji_fas_url: https://accounts.centos.org
 koji_fas_user:
 koji_fas_pass:
 
+# Instead of using legacy FAS, do we want to use IPA/FASJSON to sync group memberships ?
+# It will require also a service keytab to auth against fasjson url endpoint
+koji_fasjson_sync: False
+koji_fasjson_url: https://fasjson.stg.fedoraproject.org
+koji_fasjson_keytab:   # keytab file distributed by this role
+
+
 # Do we need a local admin user on the hub itself ? 
 koji_admin_client: True
 koji_admin_user: admin

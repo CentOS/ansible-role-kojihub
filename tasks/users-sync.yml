@@ -2,7 +2,7 @@
 
 - name: Installing required python pkgs
   yum:
-    name: python-centos
+    name: ['python-centos', 'python-requests-gssapi' ]
     state: installed
 
 - name: Ensuring we have a dir for bsadmin tool
@@ -18,10 +18,18 @@
     dest: /etc/bsadmin/bsadmin.conf
     mode: 0644
 
+- name: Distributing needed keytab
+  copy:
+    src: "{{ pkistore }}/krb5/{{ koji_fasjson_keytab }}"
+    dest: "/etc/bsadmin/{{ koji_fasjson_keytab }}"
+    mode: '0400'
+    owner: "{{ koji_admin_user }}"
+    group: "{{ koji_admin_user }}"
+  when: koji_fasjson_sync
+
 - name: Cron job to sync FAS/Koji
   cron:
     name: "CentOS ACO-koji sync"
     job: "/opt/cbs-tools/scripts/cbs-fas-sync.sh > /dev/null 2>&1"
     minute: "*/7"
     user: "{{ koji_admin_user }}"
-    
