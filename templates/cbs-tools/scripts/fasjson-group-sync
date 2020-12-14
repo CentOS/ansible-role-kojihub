@@ -26,7 +26,7 @@ if __name__ == '__main__':
         userlist = []
         for user in group_members_json['result']:
           userlist.append(user['username'])
-        string = '%s:%s \n' % (group['groupname'] , ','.join(userlist))
+        string = '%s:%s \n' % (group['groupname'].replace('sig-','') , ','.join(userlist))
         fo.write (string)
     fo.close()
 
