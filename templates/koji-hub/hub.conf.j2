@@ -46,7 +46,7 @@ ProxyDNs = {{ koji_tls_proxydn }}
 {% if koji_create_users %}
 LoginCreatesUser = On
 {% else %}
-LoginCreatesUser = On
+LoginCreatesUser = Off
 {% endif %}
 KojiWebURL = {{ koji_web_url }}
 
