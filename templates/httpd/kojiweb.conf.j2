@@ -48,18 +48,13 @@ Alias /koji "/usr/share/koji-web/scripts/wsgi_publisher.py"
 
 {% if koji_auth_kerberos %}
 # uncomment this to enable authentication via Kerberos
-# <Location /koji/login>
-#     AuthType Kerberos
-#     AuthName "Koji Web UI"
-#     KrbMethodNegotiate on
-#     KrbMethodK5Passwd off
-#     KrbServiceName HTTP
-#     KrbAuthRealm EXAMPLE.COM
-#     Krb5Keytab /etc/httpd.keytab
-#     KrbSaveCredentials off
-#     Require valid-user
-#     ErrorDocument 401 /koji-static/errors/unauthorized.html
-# </Location>
+ <Location /koji/login>
+     AuthType GSSAPI
+     AuthName "Koji Web UI"
+     GssapiCredStore keytab:/etc/koji-hub/{{ koji_auth_keytab }}
+     Require valid-user
+     ErrorDocument 401 /koji-static/errors/unauthorized.html
+ </Location>
 {% endif %}
 
 {% if koji_auth_tls %}

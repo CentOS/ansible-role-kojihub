@@ -10,14 +10,25 @@ topurl = {{ koji_files_url }}
 ;path to the koji top directory
 topdir = /mnt/koji
 
+{% if koji_auth_tls %}
+;forcing x509 auth (default to kerberos on 1.11)
+authtype = ssl
 ;client certificate
 cert = /etc/pki/koji/{{ koji_admin_pem }}
 
 ;certificate of the CA that issued the client certificate
 ca = /etc/pki/koji/{{ koji_hub_cacert }}
 
+{% endif %}
+
 ;certificate of the CA that issued the HTTP server certificate
 serverca = /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt
 
-;forcing x509 auth (default to kerberos on 1.11)
-authtype = ssl
+
+{%if koji_auth_kerberos %}
+;the principal to auth as for automated clients
+principal = {{ koji_admin_user }}@{{ koji_auth_realm }}
+	
+;the keytab to auth as for automated clients
+keytab = /home/{{ koji_admin_user }}/{{ koji_admin_keytab }}
+{% endif %}

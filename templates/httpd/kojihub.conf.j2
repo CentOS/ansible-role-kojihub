@@ -48,12 +48,21 @@ Alias /externalrepos "{{ koji_mountpoint }}/externalrepos"
     </IfVersion>
 </Directory>
 
-
+{% if koji_auth_tls %}
 # uncomment this to enable authentication via SSL client certificates
 <Location /kojihub/ssllogin>
         SSLVerifyClient require
         SSLVerifyDepth  10
         SSLOptions +StdEnvVars
 </Location>
+{% endif %}
 
-
+{% if koji_auth_kerberos %}
+# uncomment this to enable authentication via GSSAPI	
+<Location /kojihub/ssllogin>
+        AuthType GSSAPI
+        AuthName "GSSAPI Single Sign On Login"
+        GssapiCredStore keytab:/etc/koji-hub/{{ koji_auth_keytab }}
+        Require valid-user
+</Location>
+{% endif %}

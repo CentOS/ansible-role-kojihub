@@ -1,72 +1,170 @@
-- include_role:
-    name: postgresql
+- name: local Postgresql tasks
+  block:
+  - include_role:
+      name: postgresql
 
-- name: Creating pgsql/koji db user
-  postgresql_user: 
-    name: "{{ koji_db_user }}" 
-    password: "{{ koji_db_pass }}"
-    role_attr_flags: "NOCREATEDB,NOSUPERUSER,NOCREATEROLE"
-  become_user: postgres
+  - name: Creating pgsql/koji db user
+    postgresql_user: 
+      name: "{{ koji_db_user }}" 
+      password: "{{ koji_db_pass }}"
+      role_attr_flags: "NOCREATEDB,NOSUPERUSER,NOCREATEROLE"
+    become_user: postgres
 
-- name: Ensuring we have pgsql DB for koji
-  postgresql_db: 
-    name: "{{ koji_db_name }}" 
-    owner: "{{ koji_db_user }}" 
-    encoding: UTF-8
-  become_user: postgres
-  register: koji_created_db
+  - name: Ensuring we have pgsql DB for koji
+    postgresql_db: 
+      name: "{{ koji_db_name }}" 
+      owner: "{{ koji_db_user }}" 
+      encoding: UTF-8
+    become_user: postgres
+    register: koji_created_db
+  
+  - name: Ensuring koji user has all rights on DB
+    postgresql_privs:
+      db: "{{ koji_db_name }}"
+      type: database
+      privs: ALL
+      state: present
+      role: "{{ koji_db_user }}"
+    become_user: postgres
+
+  when: not koji_db_remote
+  tags:
+    - db
+
+
+- name: remote postgresql tasks
+  block:
+  - name: Creating pgsql/koji db user
+    postgresql_user: 
+      name: "{{ koji_db_user }}" 
+      password: "{{ koji_db_pass }}"
+      role_attr_flags: "NOCREATEDB,NOSUPERUSER,NOCREATEROLE"
+    become_user: postgres
+
+  - name: Ensuring we have pgsql DB for koji
+    postgresql_db: 
+      name: "{{ koji_db_name }}" 
+      owner: "{{ koji_db_user }}" 
+      encoding: UTF-8
+    become_user: postgres
+    register: koji_remote_created_db
+  
+  - name: Ensuring koji user has all rights on DB
+    postgresql_privs:
+      db: "{{ koji_db_name }}"
+      type: database
+      privs: ALL
+      state: present
+      role: "{{ koji_db_user }}"
+    become_user: postgres
+ 
+  when: koji_db_remote
+  delegate_to: "{{ koji_db_host }}"
+  tags:
+    - db
+
+
+- name: Ensuring we have local postgresql client and deps (in case of remote)
+  yum:
+    name: "{{ psql_client_pkgs }}"
+    state: installed
+  when: koji_db_remote
+  tags:
+    - db
 
 - name: Finding the schema to load in DB
   shell: find /usr/share/doc -iname schema.sql|grep koji
   register: koji_sql_schema
-  when: koji_created_db is changed
+  when: koji_created_db is changed or koji_remote_created_db is changed
+  tags:
+    - db
 
-- name: Load initial schema for Koji DB if needed
-  postgresql_db:
-    name: "{{ koji_db_name }}"
-    target: "{{ koji_sql_schema.stdout }}"
-    owner: "{{ koji_db_user }}"
-    state: restore
-  become_user: postgres
-  when: koji_created_db is changed
 
 - name: Distributing init for koji admin and kojira users
   template:
     src: koji-pgsql-rights.sql.j2
     dest: /var/tmp/koji-pgsql-rights.sql
     mode: 0644
-  when: koji_created_db is changed
+  when: koji_created_db is changed or koji_remote_created_db is changed
+  tags:
+    - db
+
+- name: Local - Postgresql koji schema load
+  block:
+  - name: Load initial schema for Koji DB if needed
+    postgresql_db:
+      name: "{{ koji_db_name }}"
+      target: "{{ koji_sql_schema.stdout }}"
+      owner: "{{ koji_db_user }}"
+      state: restore
+    become_user: postgres
+    when: koji_created_db is changed or koji_remote_created_db is changed
+     
+  - name: Creating default koji admin and kojira users in DB
+    postgresql_db:
+      name: "{{ koji_db_name }}"
+      target: /var/tmp/koji-pgsql-rights.sql
+      state: restore
+    become_user: postgres
+    when: koji_created_db is changed or koji_remote_created_db is changed
+
+  - name: Ensuring koji user has all rights on DB
+    postgresql_privs:
+      db: "{{ koji_db_name }}"
+      role: "{{ koji_db_user }}"
+      objs: ALL_IN_SCHEMA
+      privs: ALL
+      state: present
+      type: "{{ item }}"
+    become_user: postgres
+    with_items:
+      - table
+      - sequence
+  when: not koji_db_remote
+  tags:
+    - db
+
+- name: Remote - Postgresql schema load
+  block:
+  - name: Load initial schema for Koji DB if needed
+    postgresql_db:
+      login_host: "{{ koji_db_host }}"
+      login_user: "{{ koji_db_user }}"
+      login_password: "{{ koji_db_pass }}"
+      name: "{{ koji_db_name }}"
+      target: "{{ koji_sql_schema.stdout }}"
+      owner: "{{ koji_db_user }}"
+      state: restore
+    become_user: postgres
+    when: koji_created_db is changed or koji_remote_created_db is changed
     
+  - name: Creating default koji admin and kojira users in DB
+    postgresql_db:
+      login_host: "{{ koji_db_host }}"
+      login_user: "{{ koji_db_user }}"
+      login_password: "{{ koji_db_pass }}"
+      name: "{{ koji_db_name }}"
+      target: /var/tmp/koji-pgsql-rights.sql
+      state: restore
+    become_user: postgres
+    when: koji_created_db is changed or koji_remote_created_db is changed
 
-- name: Creating default koji admin and kojira users in DB
-  postgresql_db:
-    name: "{{ koji_db_name }}"
-    target: /var/tmp/koji-pgsql-rights.sql
-    state: restore
-  become_user: postgres
-  when: koji_created_db is changed
-
-- name: Ensuring koji user has all rights on DB
-  postgresql_privs:
-    db: "{{ koji_db_name }}"
-    role: "{{ koji_db_user }}"
-    objs: ALL_IN_SCHEMA
-    privs: ALL
-    state: present
-    type: "{{ item }}"
-  become_user: postgres
-  with_items:
-    - table
-    - sequence
-
-- name: Ensuring koji user has all rights on DB
-  postgresql_privs:
-    db: "{{ koji_db_name }}"
-    type: database
-    privs: ALL
-    state: present
-    role: "{{ koji_db_user }}"
-  become_user: postgres
+  - name: Ensuring koji user has all rights on DB
+    postgresql_privs:
+      db: "{{ koji_db_name }}"
+      role: "{{ koji_db_user }}"
+      objs: ALL_IN_SCHEMA
+      privs: ALL
+      state: present
+      type: "{{ item }}"
+    become_user: postgres
+    delegate_to: "{{ koji_db_host }}"
+    with_items:
+      - table
+      - sequence
+  when: koji_db_remote    
+  tags:
+    - db
 
 
 

@@ -7,42 +7,67 @@ kojid_kojihub_repo_gpgcheck: False
 kojid_kojihub_repo_gpgkey: RPM-GPG-KEY-CentOS-Infra
 
 # Database settings
+# Remote postgresql host - used for delegated task for db creation and internal config
+koji_db_remote: False
+koji_db_host: psql.dev.centos.org
+# DB settings
 koji_db_name: koji
 koji_db_user: koji
 koji_db_pass: MySQLSuckS
+
 
 # kojihub/web settings
 koji_sitename: CentOS Community Build Service
 koji_custom_theme: True
 koji_theme: centos
 koji_theme_file: koji-theme-centos.tar.gz
-koji_tls_proxydn: C=NA, ST=NA, O=The CentOS Project, CN=kojihub.cbs.centos.org/emailAddress=user-account-services@centos.org
 koji_hub_url: https://koji.centos.org/kojihub
 koji_web_url: https://koji.centos.org/koji
 koji_files_url: https://koji.centos.org/kojifiles
 koji_hub_secret: aoYvNQPWTb7BieCco1iljBqym # Don't forget to change this before deployment
+# Do we want to automatically create users in koji db on succesfull auth (tls or kerberos)
+# If not, you have to use a sync tool and group memberships, like fas or fasjson - see below)
+koji_create_users: False
 
 # TLS settings for crl
 # Where to retrieve the updated CRL file
 koji_hub_tls_crl_url: https://accounts.centos.org/ca/crl.pem
-# Our CA for tls auth
-koji_hub_cacert: fas_ca_cert-prod.crt
-koji_hub_tls_key: kojihub.centos.org.key
-koji_hub_tls_cert: kojihub.centos.org.crt
 
-# For https frontend
+# For https frontend so needed despite using kerberos (or not) auth, see below
 koji_web_cacert: koji.centos.org-CAChain.crt
 koji_web_tls_key: koji.centos.org.key
 koji_web_tls_cert: koji.centos.org.crt
 
 # Authentication TLS vs Kerberos
+# Set *one* of the koji_auth_tls *or* koji_auth_kerberos boolean to True and so declare needed variables
+# TLS auth
 koji_auth_tls: True
+koji_tls_proxydn: C=NA, ST=NA, O=The CentOS Project, CN=kojihub.cbs.centos.org/emailAddress=user-account-services@centos.org
+# Our CA for tls auth
+koji_hub_cacert: fas_ca_cert-prod.crt
+koji_hub_tls_key: kojihub.centos.org.key
+koji_hub_tls_cert: kojihub.centos.org.crt
+
+
+# Kerberos Auth
 koji_auth_kerberos: False
+koji_auth_principal: HTTP/stream-hub.dev.centos.org@DEV.CENTOS.ORG
+koji_auth_keytab: HTTP-stream-hub.dev.centos.org.keytab
+koji_auth_proxyprincipals: HTTP/stream-hub.dev.centos.org@DEV.CENTOS.ORG
+koji_auth_realm: DEV.CENTOS.ORG
+# for koji web
+koji_auth_webprincipal: HTTP/stream-hub.dev.centos.org@DEV.CENTOS.ORG
+koji_auth_webkeytab: HTTP-stream-hub.dev.centos.org.keytab
+
 
 # Do we want to also run kojira
+# In case of TLS auth it needs a .pem file and in case of kerberos auth, a keytab
 koji_kojira: True
 koji_kojira_user: kojira
 koji_kojira_tls_pem: kojira.pem # CN has to match with koji_kojira_user defined 
+# if kerberos
+koji_kojira_principal: koji/kojira@DEV.CENTOS.ORG
+koji_kojira_keytab: kojira.keytab # Needed only if koji_auth_kerberos above
 
 # Do we want to also run mash
 koji_mash: False
@@ -68,9 +93,13 @@ koji_fasjson_keytab:   # keytab file distributed by this role
 
 
 # Do we need a local admin user on the hub itself ? 
+# In case of TLS auth it needs a .pem file and in case of kerberos auth, a keytab
 koji_admin_client: True
 koji_admin_user: admin
 koji_admin_pem: admin.pem
+# If using kerberos
+koji_admin_principal: koji-admin@DEV.CENTOS.ORG
+koji_admin_keytab: koji-admin.keytab # Needed only if koji_auth_kerberos above and vice/versa with TLS
 
 # Kojihub plugins
 koji_hub_plugins: True

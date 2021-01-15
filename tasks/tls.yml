@@ -15,6 +15,7 @@
         - "{{ koji_hub_tls_cert }}"
       notify:
         - restart_httpd
+      when: koji_auth_tls
 
     - name: TLS certs for kojiweb
       copy:

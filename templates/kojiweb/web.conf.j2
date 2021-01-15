@@ -10,17 +10,23 @@ KojiTheme = {{ koji_theme }}
 KojiHubURL = {{ koji_hub_url }}
 KojiFilesURL = {{ koji_files_url }}
 
+{% if koji_auth_kerberos %}
 # Kerberos authentication options
-# WebPrincipal = koji/web@EXAMPLE.COM
-# WebKeytab = /etc/httpd.keytab
-# WebCCache = /var/tmp/kojiweb.ccache
+WebPrincipal = {{ koji_auth_webprincipal }}
+WebKeytab = /etc/kojiweb/{{ koji_auth_webkeytab }}
+WebCCache = /var/tmp/kojiweb.ccache
 # The service name of the principal being used by the hub
-# KrbService = host
+KrbService = host
+#The realm of server principal. Using client's realm if not set
+KrbServerRealm = {{ koji_auth_realm }}
+{% endif %}
 
+{% if koji_auth_tls %}
 # SSL authentication options
 WebCert = /etc/pki/koji/{{ koji_hub_tls_cert }}
 ClientCA = /etc/pki/koji/{{ koji_hub_cacert }}
 KojiHubCA = /etc/pki/koji/{{ koji_hub_cacert }}
+{% endif %}
 
 LoginTimeout = 72
 

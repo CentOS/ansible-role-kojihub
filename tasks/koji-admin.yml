@@ -21,7 +21,16 @@
     dest: "/etc/pki/koji/{{ koji_admin_pem }}"
     owner: "{{ koji_admin_user }}"
     mode: 0644
+  when: koji_auth_tls
 
+- name: Copy keytab for koji admin user
+  copy: 
+    src: "{{ pkistore }}/koji/{{ koji_admin_keytab }}"
+    dest: "/home/{{ koji_admin_user }}/{{ koji_admin_keytab }}"
+    owner: "{{ koji_admin_user }}"
+    mode: 0644
+  when: koji_auth_kerberos
+  
 - name: Ensuring we have scripts directory
   file:
     path : /opt/cbs-tools/scripts

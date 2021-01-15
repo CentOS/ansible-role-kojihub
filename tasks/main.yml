@@ -1,3 +1,11 @@
+- name: Importing specific distro variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+    - "{{ ansible_distribution }}.yml"
+  tags:
+    - vars
+
 - include_role:
     name: httpd
   vars:
@@ -22,7 +30,7 @@
 
 - name: Ensuring we have some pkgs installed
   yum:
-    name: ['koji', 'koji-hub', 'koji-hub-plugins', 'koji-web', 'koji-utils', 'git', 'gnupg2', 'repoview', 'python-paho-mqtt']
+    name: "{{ kojihub_pkgs }}"
     state: latest
 
 - include_tasks: storage.yml
@@ -32,6 +40,9 @@
     - pki
 
 - include_tasks: postgresql.yml
+  tags:
+    - db
+
 - include_tasks: selinux.yml
 
 - name: Configuring kojihub/web
@@ -64,6 +75,20 @@
   notify:
     - restart_httpd
 
+- block:
+    - name: Importing kojihub keytab
+      copy:
+        src: "{{ pkistore }}/koji/{{ koji_auth_keytab }}"
+        dest: "/etc/koji-hub/{{ koji_auth_keytab }}"
+      notify: restart_httpd
+
+    - name: Importing koji-web keytab
+      copy:
+        src: "{{ pkistore }}/koji/{{ koji_auth_webkeytab }}"
+        dest: "/etc/kojiweb/{{ koji_auth_webkeytab }}"
+      notify: restart_httpd 
+
+  when: koji_auth_kerberos
 
 - include_tasks: koji-admin.yml
   when: koji_admin_client

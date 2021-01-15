@@ -7,21 +7,41 @@
   tags:
     - kojira
 
-- name: Creating default kojira user in DB
+- name: Creating default kojira user in DB (local)
   postgresql_db:
     name: "{{ koji_db_name }}"
     target: /etc/kojira/kojira-pgsql-rights.sql
     state: restore
   become_user: postgres
-  when: kojira_user_sql is changed
+  when: kojira_user_sql is changed and not koji_db_remote
   tags:
-    - kojira
+    - kojira  
+
+- name: Creating default kojira user in DB (remote)
+  postgresql_db:
+    login_host: "{{ koji_db_host }}"
+    login_user: "{{ koji_db_user }}"
+    login_password: "{{ koji_db_pass }}"
+    name: "{{ koji_db_name }}"
+    target: /etc/kojira/kojira-pgsql-rights.sql
+    state: restore
+  become_user: postgres
+  when: kojira_user_sql is changed and koji_db_remote
+  tags:
+    - kojira  
 
 - name: Ensuring we have kojira tls pem for auth
   copy:
     src: "{{ pkistore }}/koji/{{ koji_kojira_tls_pem }}"
     dest: "/etc/pki/koji/{{ koji_kojira_tls_pem}}"
-    mode: 0644
+    mode: 0644 
+  when: koji_auth_tls
+
+- name: Ensuring we have keytab for kerberos auth for kojira
+  copy:
+    src: "{{ pkistore }}/koji/{{ koji_kojira_keytab }}"
+    dest: "/etc/kojira/{{ koji_kojira_keytab }}"
+  when: koji_auth_kerberos  
 
 - name: Distributing kojira conf file
   template:

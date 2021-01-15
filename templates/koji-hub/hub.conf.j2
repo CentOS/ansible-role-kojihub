@@ -11,19 +11,21 @@
 ## Basic options ##
 DBName = {{ koji_db_name }}
 DBUser = {{ koji_db_user }}
-#DBHost = localhost
 DBPass = {{ koji_db_pass }}
+{% if koji_db_remote %}
+DBHost = {{ koji_db_host }}
+{% endif %}
 KojiDir = {{ koji_mountpoint }}/koji
 
 {% if koji_auth_kerberos %}
 ##  Kerberos authentication options  ##
 
-# AuthPrincipal = host/kojihub@EXAMPLE.COM
-# AuthKeytab = /etc/koji.keytab
-# ProxyPrincipals = koji/kojiweb@EXAMPLE.COM
+AuthPrincipal = {{ koji_auth_principal }}
+AuthKeytab = /etc/koji-hub/{{ koji_auth_keytab }}
+ProxyPrincipals = {{ koji_auth_proxyprincipals }}
 ## format string for host principals (%s = hostname)
-# HostPrincipalFormat = compile/%s@EXAMPLE.COM
-
+HostPrincipalFormat = compile/%s@{{ koji_auth_realm }}
+AllowedKrbRealms = {{ koji_auth_realm }}
 ## end Kerberos auth configuration
 {% endif %}
 
@@ -41,7 +43,11 @@ ProxyDNs = {{ koji_tls_proxydn }}
 
 
 ##  Other options  ##
-LoginCreatesUser = Off
+{% if koji_create_users %}
+LoginCreatesUser = On
+{% else %}
+LoginCreatesUser = On
+{% endif %}
 KojiWebURL = {{ koji_web_url }}
 
 # The domain name that will be appended to Koji usernames

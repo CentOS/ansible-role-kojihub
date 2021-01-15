@@ -1,0 +1,17 @@
+kojihub_pkgs:
+  - koji
+  - koji-hub
+  - koji-hub-plugins
+  - koji-web
+  - koji-utils
+  - git
+  - gnupg2
+  - repoview
+  - python-paho-mqtt
+  - krb5-workstation
+  - python-krbV
+
+psql_client_pkgs:
+  - postgresql
+  - python-psycopg2
+
