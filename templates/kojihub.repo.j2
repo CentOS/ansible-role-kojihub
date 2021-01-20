@@ -1,11 +1,26 @@
-[c7-kojihub]
-name = Koji Builder tools
-baseurl = {{ kojid_kojihub_repo_url }}
-enabled=1
-{% if kojid_kojihub_repo_gpgcheck %}
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/{{ kojid_kojihub_repo_gpgkey }}
+{% if ansible_distribution_major_version == '7' and not ansible_architecture == 'x86_64' %}
+{% set contentdir = 'altarch' %}
 {% else %}
-gpgcheck=0
+{% set contentdir = 'centos' %} 
 {% endif %}
 
+{% if centos_infra_env == 'prod' %}
+[centos-buildtools-common]
+name=CentOS koji buildtools repository
+baseurl=http://mirror.centos.org/{{ contentdir }}/$releasever/infra/$basearch/buildtools-common/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/{{ kojid_kojihub_repo_gpgkey }}
+{% elif centos_infra_env == 'stg' %}
+[centos-buildtools-common]
+name=CentOS STG koji buildtools repository
+baseurl=http://buildlogs.centos.org/centos/$releasever/infra/$basearch/buildtools-common/
+enabled=1
+gpgcheck=0
+{% else %}
+[centos-buildtools-common]
+name=CentOS dev koji buildtools repository
+baseurl=http://repo.dev.centos.org/$releasever/infra/buildtools-common/$basearch/
+enabled=1
+gpgcheck=0
+{% endif %}
