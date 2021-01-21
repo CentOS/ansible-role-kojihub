@@ -92,6 +92,9 @@ koji_fasjson_url: https://fasjson.stg.fedoraproject.org
 koji_fasjson_keytab:   # keytab file distributed by this role
 
 
+# Do we need some SIGs default configs for CBS ?
+koji_cbs_sigs_config: False
+
 # Do we need a local admin user on the hub itself ? 
 # In case of TLS auth it needs a .pem file and in case of kerberos auth, a keytab
 koji_admin_client: True

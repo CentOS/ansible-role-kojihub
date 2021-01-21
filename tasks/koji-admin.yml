@@ -60,6 +60,15 @@
   tags:
     - cbs-tools
 
+- name: Importing SIG config files
+  copy:
+    src: "cbs_configs/sigs"
+    dest: /opt/cbs-tools/scripts/sigs/
+    owner: "{{ koji_admin_user }}"
+  when: koji_cbs_sigs_config  
+  tags:
+    - cbs-tools
+
 - name: Cron job to rebuild repos every day
   cron:
     name: "CentOS Koji regen repo task"
