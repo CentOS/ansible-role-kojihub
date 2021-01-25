@@ -25,7 +25,6 @@
     name: "{{ koji_db_name }}"
     target: /etc/kojira/kojira-pgsql-rights.sql
     state: restore
-  become_user: postgres
   when: kojira_user_sql is changed and koji_db_remote
   tags:
     - kojira  

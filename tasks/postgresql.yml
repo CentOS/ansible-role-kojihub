@@ -135,7 +135,6 @@
       target: "{{ koji_sql_schema.stdout }}"
       owner: "{{ koji_db_user }}"
       state: restore
-    become_user: postgres
     when: koji_created_db is changed or koji_remote_created_db is changed
     
   - name: Creating default koji admin and kojira users in DB
@@ -146,7 +145,6 @@
       name: "{{ koji_db_name }}"
       target: /var/tmp/koji-pgsql-rights.sql
       state: restore
-    become_user: postgres
     when: koji_created_db is changed or koji_remote_created_db is changed
 
   - name: Ensuring koji user has all rights on DB
@@ -157,7 +155,7 @@
       privs: ALL
       state: present
       type: "{{ item }}"
-    become_user: postgres
+    become_user: postgres  
     delegate_to: "{{ koji_db_host }}"
     with_items:
       - table

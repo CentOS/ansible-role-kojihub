@@ -28,8 +28,10 @@ SSLCertificateFile /etc/pki/tls/certs/{{ koji_web_tls_cert }}
 SSLCertificateKeyFile /etc/pki/tls/private/{{ koji_web_tls_key }}
 SSLCertificateChainFile /etc/pki/tls/certs/{{ koji_web_cacert }}
 
+{% if koji_auth_tls %}
 SSLCACertificateFile /etc/pki/koji/{{ koji_hub_cacert }}
 SSLCARevocationFile /etc/pki/koji/crl.pem
+{% endif %}
 
 # Needed to verify the koji client certificates
 #SSLVerifyClient require
