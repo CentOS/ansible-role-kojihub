@@ -62,7 +62,7 @@
 
 - name: Importing SIG config files
   copy:
-    src: "cbs_configs/sigs"
+    src: "cbs_configs/sigs/"
     dest: /opt/cbs-tools/scripts/sigs/
     owner: "{{ koji_admin_user }}"
   when: koji_cbs_sigs_config  
