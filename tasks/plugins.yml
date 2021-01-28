@@ -12,6 +12,7 @@
     src: "koji-hub/plugins/{{ item }}.conf.j2"
     dest: "/etc/koji-hub/plugins/{{ item }}.conf"
     mode: 0644
+  notify: restart_httpd  
   with_items: "{{ koji_hub_plugins_list }}"
   tags:
     - plugins
@@ -30,6 +31,7 @@
       template:
         src: koji-hub/plugins/fedora-messaging.toml.j2
         dest: /etc/fedora-messaging/config.toml
+      notify: restart_httpd
 
     - name: Turning on boolean for fedora-messaging script/call
       seboolean:
