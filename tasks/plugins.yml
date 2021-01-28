@@ -31,4 +31,10 @@
         src: koji-hub/plugins/fedora-messaging.toml.j2
         dest: /etc/fedora-messaging/config.toml
 
+    - name: Turning on boolean for fedora-messaging script/call
+      seboolean:
+        name: httpd_execmem
+        persistent: yes
+        state: yes
+
   when: "'fedmsg-koji-plugin' in koji_hub_plugins_list"
