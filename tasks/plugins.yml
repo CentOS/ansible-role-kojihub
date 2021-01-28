@@ -15,3 +15,20 @@
   with_items: "{{ koji_hub_plugins_list }}"
   tags:
     - plugins
+
+- block:
+    - name: Importing fedora-messaging role
+      include_role:
+        name: fedora-messaging-client
+      vars:
+        fedora_messaging_tls_certs: True
+        fedora_messaging_tls_cert: "{{ koji_hub_plugin_fedmsg_tls_cert }}"
+        fedora_messaging_tls_key: "{{ koji_hub_plugin_fedmsg_tls_key }}"
+        fedora_messaging_tls_ca: "{{ koji_hub_plugin_fedmsg_tls_ca }}"
+
+    - name: Configuring fedora messaging
+      template:
+        src: koji-hub/plugins/fedora-messaging.toml.j2
+        dest: /etc/fedora-messaging/config.toml
+
+  when: "'fedmsg-koji-plugin' in koji_hub_plugins_list"

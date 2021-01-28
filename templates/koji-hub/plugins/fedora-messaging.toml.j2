@@ -1,0 +1,17 @@
+# A sample configuration for fedora-messaging. This file is in the TOML format.
+# For complete details on all configuration options, see the documentation.
+
+amqp_url = "{{ koji_hub_plugin_fedmsg_amqp_url }}"
+
+# The topic_prefix configuration value will add a prefix to the topics of every sent message.
+# This is used for migrating from fedmsg, and should not be used afterwards.
+topic_prefix = "{{ koji_hub_plugin_fedmsg_topic }}"
+
+[tls]
+ca_cert = "/etc/fedora-messaging/{{ koji_hub_plugin_fedmsg_tls_ca }}"
+keyfile = "/etc/fedora-messaging/{{ koji_hub_plugin_fedmsg_tls_key }}"
+certfile = "/etc/fedora-messaging/{{ koji_hub_plugin_fedmsg_tls_cert }}"
+
+[client_properties]
+app = "Koji"
+
