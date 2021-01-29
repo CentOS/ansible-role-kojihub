@@ -165,8 +165,22 @@ do
                 *)
                     BUILDROOT_PKGS_EXTRAS=""
                     HA_REPO_ENABLED=false
+                    TESTING_TAG_INHERITED=false
                     ;;
             esac
+
+            if [ -f $CONFIG_PATH/$SIGNAME/$PROJECT/config.sh ]
+            then
+                echo "Using specific $SIGNAME/$PROJECT options: "
+                echo "###"
+                cat $CONFIG_PATH/$SIGNAME/$PROJECT/config.sh
+                echo "###"
+                source $CONFIG_PATH/$SIGNAME/$PROJECT/config.sh
+            else
+                echo "Using default options for $SIGNAME/$PROJECT"
+                BUILDROOT_DEFAULT="curl bash bzip2 coreutils cpio diffutils redhat-release findutils gawk gcc gcc-c++ grep gzip info make patch redhat-rpm-config rpm-build sed shadow-utils tar unzip util-linux-ng which buildsys-tools tar"
+                COMMON_INHERITANCE=true
+            fi
 
             # Check for -common
             #$KOJI list-tags | grep $P_SIG-common-candidate &> /dev/null
@@ -254,18 +268,7 @@ do
                     # END bootstrap
                     $KOJI add-group $R_SIG-$TAG-build build
                     $KOJI add-group $R_SIG-$TAG-build srpm-build
-                    # Add <collection>-build to the buildroot if collection enabled
-                    if [ -f $CONFIG_PATH/$SIGNAME/$PROJECT/config.sh ]
-                    then
-                        echo "Using specific $SIGNAME/$PROJECT options: "
-                        echo "###"
-                        cat $CONFIG_PATH/$SIGNAME/$PROJECT/config.sh
-                        echo "###"
-                        source $CONFIG_PATH/$SIGNAME/$PROJECT/config.sh
-                    else
-                        BUILDROOT_DEFAULT="curl bash bzip2 coreutils cpio diffutils redhat-release findutils gawk gcc gcc-c++ grep gzip info make patch redhat-rpm-config rpm-build sed shadow-utils tar unzip util-linux-ng which buildsys-tools tar"
-                        COMMON_INHERITANCE=true
-                    fi
+
                     if ( $optionc )
                     then
                         $KOJI add-group-pkg $R_SIG-$TAG-build build $BUILDROOT_DEFAULT buildsys-macros-$REALTAG $COLLECTIONS-build scl-utils-build
@@ -281,11 +284,15 @@ do
                         $KOJI add-tag-inheritance --priority 5 $R_SIG-$TAG-build buildsys${DIST}
                     fi
                     $KOJI add-tag-inheritance --priority 10 $R_SIG-$TAG-build $R_SIG-candidate
+                    if ( $TESTING_TAG_INHERITED )
+                    then
+                        $KOJI add-tag-inheritance --priority 12 $R_SIG-$TAG-build $R_SIG-testing
+                    fi
                     # If -common exists for the project add it
                     if [ "x$RELEASE" != "xcommon" ] && [ "x$COMMON_INHERITANCE" != "xfalse" ]
                     then
                         $KOJI list-tags | grep $P_SIG-common-candidate &> /dev/null
-                                                [ $? -eq 0 ] && echo "Adding $P_SIG-common-candidate as inheritance" && $KOJI add-tag-inheritance --priority 15 $R_SIG-$TAG-build $P_SIG-common-candidate
+                        [ $? -eq 0 ] && echo "Adding $P_SIG-common-candidate as inheritance" && $KOJI add-tag-inheritance --priority 15 $R_SIG-$TAG-build $P_SIG-common-candidate
                     fi
                     # Add SIG -common if it exists
                     if [ "x$COMMON_INHERITANCE" != "xfalse" ]
