@@ -165,8 +165,22 @@ do
                 *)
                     BUILDROOT_PKGS_EXTRAS=""
                     HA_REPO_ENABLED=false
+                    TESTING_TAG_INHERITED=false
                     ;;
             esac
+
+            if [ -f $CONFIG_PATH/$SIGNAME/$PROJECT/config.sh ]
+            then
+                echo "Using specific $SIGNAME/$PROJECT options: "
+                echo "###"
+                cat $CONFIG_PATH/$SIGNAME/$PROJECT/config.sh
+                echo "###"
+                source $CONFIG_PATH/$SIGNAME/$PROJECT/config.sh
+            else
+                echo "Using default options for $SIGNAME/$PROJECT"
+                BUILDROOT_DEFAULT="curl bash bzip2 coreutils cpio diffutils redhat-release findutils gawk gcc gcc-c++ grep gzip info make patch redhat-rpm-config rpm-build sed shadow-utils tar unzip util-linux-ng which buildsys-tools tar"
+                COMMON_INHERITANCE=true
+            fi
 
             # Check for -common
             #$KOJI list-tags | grep $P_SIG-common-candidate &> /dev/null
