@@ -33,3 +33,4 @@
     job: "/opt/cbs-tools/scripts/cbs-fas-sync.sh > /dev/null 2>&1"
     minute: "*/7"
     user: "{{ koji_admin_user }}"
+  when: koji_fas_sync or koji_fasjson_sync  
