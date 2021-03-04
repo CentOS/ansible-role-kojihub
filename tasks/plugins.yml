@@ -13,6 +13,7 @@
     dest: "/etc/koji-hub/plugins/{{ item }}.conf"
     mode: 0644
   notify: restart_httpd  
+  when: '"{{ item }}" in ["fedmsg-koji-plugin","sidetag_hub"]'
   with_items: "{{ koji_hub_plugins_list }}"
   tags:
     - plugins
