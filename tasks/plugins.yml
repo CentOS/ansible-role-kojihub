@@ -3,7 +3,7 @@
     src: "plugins/{{ item }}.py"
     dest: "/usr/lib/koji-hub-plugins/{{ item }}.py"
     mode: 0755
-  with_items: "{{ koji_hub_plugins_list }}"
+  with_items: "{{ koji_hub_install_plugins }}"
   tags:
     - plugins
 
