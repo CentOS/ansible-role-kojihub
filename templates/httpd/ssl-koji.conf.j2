@@ -10,6 +10,9 @@ RewriteRule  ^/$    /koji [R,L]
  Header always set X-Content-Type-Options "nosniff"
  Header always set Referrer-Policy "same-origin"
 
+{% if koji_web_httpd_snippet is defined %}
+{{ koji_web_httpd_snippet }}
+{% endif %}
 
 ErrorLog logs/ssl_error_log
 TransferLog logs/ssl_access_log

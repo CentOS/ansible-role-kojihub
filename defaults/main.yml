@@ -38,6 +38,15 @@ koji_web_cacert: koji.centos.org-CAChain.crt
 koji_web_tls_key: koji.centos.org.key
 koji_web_tls_cert: koji.centos.org.crt
 
+# some httpd snipped to eventually inject into httpd vhost
+# Nothing defined by default but can be defined like this:
+# koji_web_httpd_snippet: |
+#   <If "-n %{HTTP:X-Forwarded-For}" >
+#    AddOutputFilterByType INFLATE;SUBSTITUTE;DEFLATE text/html
+#    Substitute "s|replace_internal_name|public_hostname|in"
+#   </If>
+
+
 # Authentication TLS vs Kerberos
 # Set *one* of the koji_auth_tls *or* koji_auth_kerberos boolean to True and so declare needed variables
 # TLS auth
