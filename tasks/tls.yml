@@ -42,6 +42,8 @@
       get_url:
         url: "{{ koji_hub_tls_crl_url }}"
         dest: /etc/pki/koji/crl.pem
+      when: koji_auth_tls
+
   tags:
     - tls
     - pki
