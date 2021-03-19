@@ -49,6 +49,8 @@
     mode: 0644
   notify:
     - restart_kojira
+  tags: 
+    - kojira
 
 - name: Service kojira is running
   service:

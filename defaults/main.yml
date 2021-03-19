@@ -77,6 +77,11 @@ koji_kojira_tls_pem: kojira.pem # CN has to match with koji_kojira_user defined
 # if kerberos
 koji_kojira_principal: koji/kojira@DEV.CENTOS.ORG
 koji_kojira_keytab: kojira.keytab # Needed only if koji_auth_kerberos above
+# do we want to ignore some specific tags in kojira ?
+koji_kojira_ignore_tags: False
+# just one string, glob separated by space
+koji_kojira_ignored_tags: '*el6* *el5*'
+
 
 # Do we want to regen-repo on regular basis/cron
 koji_regen_repo_cron: False

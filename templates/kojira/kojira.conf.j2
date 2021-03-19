@@ -45,8 +45,10 @@ serverca = /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt
 ;turn on debugging statements in the log
 ;debug = false
 
+{% if koji_kojira_ignore_tags %}
 ; ignored repositories according to glob. Multiple masks separated by space.
-; ignore_tags =
+ignore_tags = {{ koji_kojira_ignored_tags }}
+{% endif %}
 
 
 ; Monitor external repos and trigger the appropriate Koji repo regenerations
