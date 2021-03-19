@@ -78,6 +78,11 @@ koji_kojira_tls_pem: kojira.pem # CN has to match with koji_kojira_user defined
 koji_kojira_principal: koji/kojira@DEV.CENTOS.ORG
 koji_kojira_keytab: kojira.keytab # Needed only if koji_auth_kerberos above
 
+# Do we want to regen-repo on regular basis/cron
+koji_regen_repo_cron: False
+koji_regen_repo_hour: '*/2'
+koji_regen_repo_min: '5'
+
 # Do we want to also run mash
 koji_mash: False
 

@@ -73,7 +73,8 @@
   cron:
     name: "CentOS Koji regen repo task"
     job: "/opt/cbs-tools/scripts/regen_build_repos.sh > /dev/null 2>&1"
-    minute: "5"
-    hour: "3"
+    minute: "{{ koji_regen_repo_min }}"
+    hour: "{{ koji_regen_repo_hour }}"
     user: "{{ koji_admin_user }}"
+  when: koji_regen_repo_cron
 
