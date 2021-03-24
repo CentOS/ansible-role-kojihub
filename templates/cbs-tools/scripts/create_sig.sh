@@ -114,7 +114,7 @@ do
         ;;
         6) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) &&  ARCHES="i686 x86_64"; DEFAULT_DISTTAG="el6"
         ;;
-        7) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64"; DEFAULT_DISTTAG="el7.centos"
+        7) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64"; DEFAULT_DISTTAG="el7.centos"; BUILDROOT_PKGS_EXTRAS="centpkg-minimal"
         ;;
         8) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64 aarch64 ppc64le"; DEFAULT_DISTTAG="el8"; BUILDROOT_PKGS_EXTRAS="centpkg-minimal"
         ;;
