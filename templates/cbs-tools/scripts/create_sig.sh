@@ -116,9 +116,9 @@ do
         ;;
         7) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64"; DEFAULT_DISTTAG="el7.centos"
         ;;
-        8) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64 aarch64 ppc64le"; DEFAULT_DISTTAG="el8"
+        8) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64 aarch64 ppc64le"; DEFAULT_DISTTAG="el8"; BUILDROOT_PKGS_EXTRAS="centpkg-minimal"
         ;;
-        8s) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64 aarch64 ppc64le"; DEFAULT_DISTTAG="el8s"
+        8s) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64 aarch64 ppc64le"; DEFAULT_DISTTAG="el8s"; BUILDROOT_PKGS_EXTRAS="centpkg-minimal"
         ;;
         *) echo "It seems your distribution el${DIST} is unsupported" && continue
         ;;
@@ -163,7 +163,7 @@ do
                 #    BUILDROOT_PKGS_EXTRAS="openstack-macros"
                 #    ;;
                 *)
-                    BUILDROOT_PKGS_EXTRAS=""
+                    BUILDROOT_PKGS_EXTRAS="$BUILDROOT_PKGS_EXTRAS"
                     HA_REPO_ENABLED=false
                     TESTING_TAG_INHERITED=false
                     ;;
@@ -245,7 +245,6 @@ do
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-appstream --mode bare
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-baseos --mode bare
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
-                        $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.new_chroot=1"
                     else
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-extras
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-updates
