@@ -16,7 +16,7 @@ fas_fetch_script="/opt/cbs-tools/scripts/fasjson-group-sync"
 {% endif %}
 koji_config_script="/opt/cbs-tools/scripts/fas_perms_to_koji.py"
 logfile="/var/tmp/cbs-fas.log"
-groups_to_exclude="hpv"
+groups_to_exclude="{% for group in koji_fas_excluded_groups -%}{{ group }} {% endfor %}"
 
 function exit_check() {
   if [ "$?" -ne "0" ] ; then

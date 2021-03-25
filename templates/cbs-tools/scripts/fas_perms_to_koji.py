@@ -37,9 +37,8 @@ KOJI_URL = '{{ koji_hub_url }}'
 CLIENT_CERT = os.path.expanduser('/etc/pki/koji/{{ koji_admin_pem }}')
 CLIENTCA_CERT = os.path.expanduser('/etc/pki/koji/{{ koji_hub_cacert }}')
 SERVERCA_CERT = os.path.expanduser('/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt')
-USER = '{{ koji_admin_user }}'
 FASDUMP = '/etc/bsadmin/groups'
-SYSTEM_USERS = ['{{ koji_admin_user }}', 'kojira']
+SYSTEM_USERS = [{% for user in koji_system_users -%} '{{ user }}', {% endfor %}]
 IMAGE_PERM = ['virt', 'cloud', 'atomic', 'cloudinstance']
 
 def get_user_list():
