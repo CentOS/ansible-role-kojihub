@@ -43,7 +43,13 @@
         url: "{{ koji_hub_tls_crl_url }}"
         dest: /etc/pki/koji/crl.pem
       when: koji_auth_tls
-
+      register: new_crl
+    
+    - name: Verify if we need to convert CRL
+      shell: 
+        chdir: /etc/pki/koji
+        cmd: openssl crl -in crl.pem -text >/dev/null 2>&1 || openssl crl -inform DER -in crl.pem -outform PEM -out crl.pem
+    
   tags:
     - tls
     - pki
