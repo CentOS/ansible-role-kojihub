@@ -56,6 +56,15 @@
   notify:
     - restart_httpd
 
+- name: Configuring koji policy
+  copy:
+    src: "{{ filestore }}/koji/policy.conf"
+    dest: "/etc/koji-hub/hub.conf.d/policy.conf"
+    mode: 0644
+  when: "'stream.rdu2' in inventory_hostname"
+  notify:
+    - restart_httpd
+
 - name: Deploying koji custom theme
   unarchive:
     src: "{{ koji_theme_file }}"
