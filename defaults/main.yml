@@ -81,7 +81,10 @@ koji_kojira_keytab: kojira.keytab # Needed only if koji_auth_kerberos above
 koji_kojira_ignore_tags: False
 # just one string, glob separated by space
 koji_kojira_ignored_tags: '*el6* *el5*'
-
+# Kojira can delete deleted and dist repo automatically
+# default values:
+kojira_delete_repo_lifetime: '172800'
+kojira_dist_repo_lifetime: '172800'
 
 # Do we want to regen-repo on regular basis/cron
 koji_regen_repo_cron: False

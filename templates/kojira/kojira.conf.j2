@@ -36,11 +36,11 @@ serverca = /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt
 
 {% endif %}
 
-;how soon (in seconds) to clean up expired repositories. 1 week default
-;deleted_repo_lifetime = 604800
+;how soon (in seconds) to clean up expired repositories. 
+deleted_repo_lifetime = {{ kojira_delete_repo_lifetime }}
 
-;how soon (in seconds) to clean up dist repositories. 1 week default here too
-;dist_repo_lifetime = 604800
+;how soon (in seconds) to clean up dist repositories. 
+dist_repo_lifetime = {{ kojira_dist_repo_lifetime }}
 
 ;turn on debugging statements in the log
 ;debug = false
