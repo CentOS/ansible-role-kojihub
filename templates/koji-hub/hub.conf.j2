@@ -96,16 +96,3 @@ Plugins = {% for plugin in koji_hub_plugins_list + koji_hub_noconfig_plugins_lis
 ## OfflineMessage as the fault string).
 ## If LockOut is True, the server will report a ServerOffline fault for all non-admin
 ## requests.
-
-[policy]
-tag =
-    all :: allow
-
-package_list =
-    all :: allow
-
-build_from_srpm =
-      tag * :: allow
-      has_perm build :: allow
-
-
