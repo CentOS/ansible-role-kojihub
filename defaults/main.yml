@@ -88,8 +88,8 @@ kojira_dist_repo_lifetime: '172800'
 
 # Do we want to regen-repo on regular basis/cron
 koji_regen_repo_cron: False
-koji_regen_repo_hour: '*/2'
-koji_regen_repo_min: '5'
+koji_regen_repo_hour: '*'
+koji_regen_repo_min: '*/2'
 
 # Do we want to also run mash
 koji_mash: False

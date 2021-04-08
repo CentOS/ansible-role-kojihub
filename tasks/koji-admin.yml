@@ -69,7 +69,7 @@
   tags:
     - cbs-tools
 
-- name: Cron job to rebuild repos every day
+- name: Cron job to verify external repositories in koji
   cron:
     name: "CentOS Koji regen repo task"
     job: "/opt/cbs-tools/scripts/regen_build_repos.sh > /dev/null 2>&1"
