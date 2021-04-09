@@ -58,10 +58,10 @@
 
 - name: Configuring koji policy
   copy:
-    src: "{{ filestore }}/koji/policy.conf"
+    src: "{{ filestore }}/koji/{{ kojihub_policy_filename }}"
     dest: "/etc/koji-hub/hub.conf.d/policy.conf"
     mode: 0644
-  when: "'stream.rdu2' in inventory_hostname"
+  when: kojihub_policy_file
   notify:
     - restart_httpd
 

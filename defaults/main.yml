@@ -68,6 +68,10 @@ koji_auth_realm: DEV.CENTOS.ORG
 koji_auth_webprincipal: HTTP/stream-hub.dev.centos.org@DEV.CENTOS.ORG
 koji_auth_webkeytab: HTTP-stream-hub.dev.centos.org.keytab
 
+# File that will be distributed and in {{ filestore }}/koji repo
+# Do we want to push a config file (probably reviewed elsewhere than ansible inventory
+kojihub_policy_file: True
+kojihub_policy_filename: policy.conf
 
 # Do we want to also run kojira
 # In case of TLS auth it needs a .pem file and in case of kerberos auth, a keytab
