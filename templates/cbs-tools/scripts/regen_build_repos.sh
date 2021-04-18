@@ -42,10 +42,17 @@ for release in "${!releases[@]}" ; do
   else
     f_log "CBS cached repodata seems old so triggering regen-repo"
     echo "${current_checksum}" > /var/tmp/mirror-${release}.checksum
-    for buildroot in $(koji list-tags|grep el${release}-build) ; do
-      f_log "koji regen-repo --nowait ${buildroot}"
-      koji regen-repo --nowait ${buildroot} >> $log_file 2>&1
-    done
+    if [ "$release" == "8s" ] ; then
+      for buildroot in $(koji list-tags|grep 8s|grep build) ; do
+        f_log "koji regen-repo --nowait ${buildroot}"
+        koji regen-repo --nowait ${buildroot} >> $log_file 2>&1
+      done
+    else
+      for buildroot in $(koji list-tags|grep el${release}-build) ; do
+        f_log "koji regen-repo --nowait ${buildroot}"
+        koji regen-repo --nowait ${buildroot} >> $log_file 2>&1
+      done
+    fi
   fi
 done
 f_log "[END] Finished processing koji externalrepos check"
