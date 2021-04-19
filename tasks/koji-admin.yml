@@ -31,41 +31,40 @@
     mode: 0644
   when: koji_auth_kerberos
   
-- name: Ensuring we have scripts directory
-  file:
-    path : /opt/cbs-tools/scripts
-    state: directory
-    mode: 0750
-    owner: "{{ koji_admin_user }}"
+- block:
+    - name: Ensuring we have scripts directory
+      file:
+        path : /opt/cbs-tools/scripts
+        state: directory
+        mode: 0750
+        owner: "{{ koji_admin_user }}"
 
-- name: Importing all needed scripts
-  template:
-    src: "cbs-tools/scripts/{{ item }}"
-    dest: /opt/cbs-tools/scripts/
-    owner: "{{ koji_admin_user }}"
-    mode: 0750
-  with_items:
-    - check_tag_perm.py
-    - common6.sh
-    - common7.sh
-    - create_sig.sh
-    - external_repos_updates.sh
-    - fas_perms_to_koji.py
-    - koji-group-sync.py
-    - fasjson-group-sync
-    - mash_run.sh
-    - regen_all_buildroots.sh
-    - cbs-fas-sync.sh
-    - regen_build_repos.sh
-  tags:
-    - cbs-tools
+    - name: Importing all needed scripts
+      template:
+        src: "cbs-tools/scripts/{{ item }}"
+        dest: /opt/cbs-tools/scripts/
+        owner: "{{ koji_admin_user }}"
+        mode: 0750
+      with_items:
+        - check_tag_perm.py
+        - common6.sh
+        - common7.sh
+        - create_sig.sh
+        - external_repos_updates.sh
+        - fas_perms_to_koji.py
+        - koji-group-sync.py
+        - fasjson-group-sync
+        - mash_run.sh
+        - regen_all_buildroots.sh
+        - cbs-fas-sync.sh
+        - regen_build_repos.sh
 
-- name: Importing SIG config files
-  copy:
-    src: "cbs_configs/sigs/"
-    dest: /opt/cbs-tools/scripts/sigs/
-    owner: "{{ koji_admin_user }}"
-  when: koji_cbs_sigs_config  
+    - name: Importing SIG config files
+      copy:
+        src: "cbs_configs/sigs/"
+        dest: /opt/cbs-tools/scripts/sigs/
+        owner: "{{ koji_admin_user }}"
+  when: koji_cbs_sigs_config
   tags:
     - cbs-tools
 

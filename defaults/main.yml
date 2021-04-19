@@ -118,6 +118,7 @@ koji_fasjson_url: https://fasjson.stg.fedoraproject.org
 koji_fasjson_keytab:   # keytab file distributed by this role
 
 # Do we need some SIGs default configs for CBS ?
+# This will also import all cbs scripts/snippet specific for some cbs.c.o operations
 koji_cbs_sigs_config: False
 # If we sync from fas/ipa, which sig-<name> do we want to eventually exclude for koji perms
 koji_fas_excluded_groups:
