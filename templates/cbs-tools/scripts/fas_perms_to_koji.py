@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) 2015, Thomas Oulevey <thomas.oulevey@cern.ch>
 # All rights reserved.
@@ -97,9 +97,9 @@ def fix_permissions(new, old):
         torevoke = list(set(old[username]) - set(new[username]))
         user = get_user(username)
         if togrant or torevoke:
-            print "\n# user:%s\n# NEW perms:%s\n# OLD perms:%s \
+            print("\n# user:%s\n# NEW perms:%s\n# OLD perms:%s \
                   \n# To grant:%s\n# To revoke:%s" \
-                  % (user, new[username], old[username], togrant, torevoke)
+                  % (user, new[username], old[username], togrant, torevoke))
         if not user:
             # Create user if it doesn't exist yet
             user = kojiclient.createUser(username)
@@ -117,18 +117,18 @@ if __name__ == '__main__':
         kojiclient = koji.ClientSession(KOJI_URL)
         kojiclient.ssl_login(CLIENT_CERT, CLIENTCA_CERT, SERVERCA_CERT)
     except:
-        print "Could not connect to koji API"
+        print("Could not connect to koji API")
         sys.exit(2)
 
     fas_perms = get_users_perms_from_file()
     koji_perms = get_users_perms()
 
     if not fas_perms:
-        print "Could not read %s file." % FASDUMP
+        print("Could not read %s file." % FASDUMP)
         sys.exit(1)
 
     if not koji_perms:
-        print "Could not read koji's user database"
+        print("Could not read koji's user database")
         sys.exit(2)
 
     fix_permissions(fas_perms, koji_perms)

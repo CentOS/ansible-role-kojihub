@@ -2,7 +2,7 @@
 
 - name: Installing required python pkgs
   yum:
-    name: ['python-centos', 'python-requests-gssapi' ]
+    name: "{{ kojihub_users_sync_pkgs }}"
     state: installed
 
 - name: Ensuring we have a dir for bsadmin tool

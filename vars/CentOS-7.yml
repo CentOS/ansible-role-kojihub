@@ -15,3 +15,5 @@ psql_client_pkgs:
   - postgresql
   - python-psycopg2
 
+kojihub_users_sync_pkgs:
+  - python-requests-gssapi

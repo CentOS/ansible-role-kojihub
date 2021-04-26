@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import sys
 import requests
 import json
@@ -21,7 +21,7 @@ if __name__ == '__main__':
     gssapi_auth = HTTPSPNEGOAuth(opportunistic_auth=True,mutual_authentication='OPTIONAL')
     results = requests.get(fasjson_full_url, auth=gssapi_auth) 
     json_body = json.loads(results.text)
-    fo = open(local_group_file,"wb")
+    fo = open(local_group_file,"w")
     for group in json_body['result']:
       if group['groupname'].startswith('sig-'):
         logging.info('Querying [%s] for members of group [%s]', fasjson_base_url, group['groupname'])

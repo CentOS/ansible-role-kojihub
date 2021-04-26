@@ -16,8 +16,6 @@ authtype = ssl
 ;client certificate
 cert = /etc/pki/koji/{{ koji_admin_pem }}
 
-;certificate of the CA that issued the client certificate
-ca = /etc/pki/koji/{{ koji_hub_cacert }}
 
 {% endif %}
 

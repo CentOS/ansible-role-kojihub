@@ -4,9 +4,11 @@
     dest: "/usr/lib/koji-hub-plugins/{{ item }}.py"
     mode: 0755
   with_items: "{{ koji_hub_install_plugins }}"
+  notify: 
+    - restart_httpd
   tags:
     - plugins
-
+ 
 - name: Configuring enabled plugins
   template:
     src: "koji-hub/plugins/{{ item }}.conf.j2"

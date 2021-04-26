@@ -12,7 +12,7 @@ from koji import PluginError
 from koji.context import context
 from koji.plugin import callback, ignore_error
 import kojihub
-import ConfigParser
+import configparser
 import logging
 import base64, json
 import os
@@ -32,7 +32,7 @@ def get_config():
     if config:
         return config
  
-    config = ConfigParser.SafeConfigParser()
+    config = configparser.SafeConfigParser()
     config.read(CONFIG_FILE)
  
     if not config.has_section('centmsg'):
@@ -89,7 +89,7 @@ def _dispatch_on_topic(payload):
         return None
  
     mqtt_host          = config.get('centmsg', 'host')
-    mqtt_port          = config.get('centmsg', 'port')
+    mqtt_port          = int(config.get('centmsg', 'port'))
     mqtt_topic         = config.get('centmsg', 'topic')
     mqtt_cacert        = config.get('centmsg', 'ca_cert')
     mqtt_tls_cert      = config.get('centmsg', 'tls_cert')
