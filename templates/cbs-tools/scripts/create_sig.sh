@@ -245,6 +245,7 @@ do
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-appstream --mode bare
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-baseos --mode bare
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
                     else
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-extras
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-updates
