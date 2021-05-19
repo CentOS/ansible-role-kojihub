@@ -25,7 +25,7 @@ AuthKeytab = /etc/koji-hub/{{ koji_auth_keytab }}
 ProxyPrincipals = {{ koji_auth_proxyprincipals }}
 ## format string for host principals (%s = hostname)
 HostPrincipalFormat = compile/%s@{{ koji_auth_realm }}
-AllowedKrbRealms = {{ koji_auth_realm }}
+AllowedKrbRealms = {{ koji_auth_allowed_realms }}
 ## end Kerberos auth configuration
 {% endif %}
 

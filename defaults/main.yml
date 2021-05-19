@@ -63,8 +63,10 @@ koji_auth_kerberos: False
 koji_auth_principal: HTTP/stream-hub.dev.centos.org@DEV.CENTOS.ORG
 koji_auth_keytab: HTTP-stream-hub.dev.centos.org.keytab
 koji_auth_proxyprincipals: HTTP/stream-hub.dev.centos.org@DEV.CENTOS.ORG
-# just one string but multiple REALMS can be separated by comma but see below !
+# This is the default REALM used between koji components. For other allowed REALMS, see next one
 koji_auth_realm: DEV.CENTOS.ORG
+# By default we'll only use the same REALM but you can have multiple ones, separated by comma but then read info below
+koji_auth_allowed_realms: DEV.CENTOS.ORG
 # for koji web
 koji_auth_webprincipal: HTTP/stream-hub.dev.centos.org@DEV.CENTOS.ORG
 koji_auth_webkeytab: HTTP-stream-hub.dev.centos.org.keytab
