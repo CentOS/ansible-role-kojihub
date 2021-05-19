@@ -63,10 +63,18 @@ koji_auth_kerberos: False
 koji_auth_principal: HTTP/stream-hub.dev.centos.org@DEV.CENTOS.ORG
 koji_auth_keytab: HTTP-stream-hub.dev.centos.org.keytab
 koji_auth_proxyprincipals: HTTP/stream-hub.dev.centos.org@DEV.CENTOS.ORG
+# just one string but multiple REALMS can be separated by comma but see below !
 koji_auth_realm: DEV.CENTOS.ORG
 # for koji web
 koji_auth_webprincipal: HTTP/stream-hub.dev.centos.org@DEV.CENTOS.ORG
 koji_auth_webkeytab: HTTP-stream-hub.dev.centos.org.keytab
+
+# Important settings WRT multiple allowed REALMS (koji_auth_realm var, separated by ',')
+# If we allow multiple REALMs we need local krb5.conf to map realms
+# And also enable https://github.com/gssapi/mod_auth_gssapi#gssapilocalname
+# Let's so default to false
+# IT enabled that will import krb5-client role so don't forget to also setup your variables for that role !
+koji_auth_gssapi_localname: False
 
 # File that will be distributed and in {{ filestore }}/koji repo
 # Do we want to push a config file (probably reviewed elsewhere than ansible inventory
