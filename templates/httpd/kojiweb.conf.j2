@@ -53,7 +53,7 @@ Alias /koji "/usr/share/koji-web/scripts/wsgi_publisher.py"
      AuthName "Koji Web UI"
      GssapiCredStore keytab:/etc/koji-hub/{{ koji_auth_keytab }}
      Require valid-user
-{% if koji_auth_kerberos_gssapi_localname %}
+{% if koji_auth_gssapi_localname %}
      GssapiLocalName On
 {% endif %}
      ErrorDocument 401 /koji-static/errors/unauthorized.html

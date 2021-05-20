@@ -64,7 +64,7 @@ Alias /externalrepos "{{ koji_mountpoint }}/externalrepos"
         AuthName "GSSAPI Single Sign On Login"
         GssapiCredStore keytab:/etc/koji-hub/{{ koji_auth_keytab }}
         Require valid-user
-{% if koji_auth_kerberos_gssapi_localname %}
+{% if koji_auth_gssapi_localname %}
         GssapiLocalName On
 {% endif %}
 </Location>

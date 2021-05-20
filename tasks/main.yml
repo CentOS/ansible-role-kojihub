@@ -99,7 +99,7 @@
     
   when: koji_auth_kerberos
 
- - include_role:
+- include_role:
      name: krb5-client
   when: koji_auth_gssapi_localname
 
