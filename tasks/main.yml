@@ -96,8 +96,12 @@
         src: "{{ pkistore }}/koji/{{ koji_auth_webkeytab }}"
         dest: "/etc/kojiweb/{{ koji_auth_webkeytab }}"
       notify: restart_httpd 
-
+    
   when: koji_auth_kerberos
+
+ - include_role:
+     name: krb5-client
+  when: koji_auth_gssapi_localname
 
 - include_tasks: koji-admin.yml
   when: koji_admin_client
