@@ -15,7 +15,17 @@
     dest: "/etc/koji-hub/plugins/{{ item }}.conf"
     mode: 0644
   notify: restart_httpd  
-  with_items: "{{ koji_hub_plugins_list }}"
+  with_items: "{{ koji_hub_plugins_list | difference(['sidetag_hub'])}}"
+  tags:
+    - plugins
+
+- name: Configuring enabled plugins with the wrong config filename
+  template:
+    src: "koji-hub/plugins/sidetag_hub.conf.j2"
+    dest: "/etc/koji-hub/plugins/sidetag.conf"
+    mode: 0644
+  notify: restart_httpd  
+  when: "'sidetag_hub' in koji_hub_plugins_list"
   tags:
     - plugins
 
