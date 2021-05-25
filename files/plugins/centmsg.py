@@ -146,17 +146,8 @@ def centmsg(cbtype, *args, **kws):
     logger.debug('Called the %s callback, args: %s; kws: %s', cbtype, str(args), str(kws))
  
     tag = kws['tag']['name']
-    build_task_id = kws['build']['task_id']
  
-    build_target = _get_build_target(build_task_id)
-    logger.debug('Build target: %s', build_target)
- 
-    arches = DEFAULT_ARCHES
-    if build_target:
-        build_tag = kojihub.get_tag(build_target['build_tag_name'])
-        arches = build_tag['arches']
- 
-    payload = { 'action': cbtype, 'tag': tag, 'arches': arches }
+    payload = { 'action': cbtype, 'tag': tag }
     job = _dispatch_on_topic(payload)
     if job:
         logger.info('Sending payload: %s to mqtt - ret code: %s' % (payload, job))
