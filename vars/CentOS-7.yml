@@ -1,9 +1,9 @@
 kojihub_pkgs:
-  - "koji-{{ koji_version }}"
-  - "koji-hub-{{ koji_version }}"
-  - "koji-hub-plugins-{{ koji_version }}"
-  - "koji-web-{{ koji_version }}"
-  - "koji-utils-{{ koji_version }}"
+  - "koji-{{ koji_version }}.el7"
+  - "koji-hub-{{ koji_version }}.el7"
+  - "koji-hub-plugins-{{ koji_version }}.el7"
+  - "koji-web-{{ koji_version }}.el7"
+  - "koji-utils-{{ koji_version }}.el7"
   - git
   - gnupg2
   - repoview

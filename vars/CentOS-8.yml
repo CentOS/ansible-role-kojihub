@@ -1,9 +1,9 @@
 kojihub_pkgs:
-  - "koji-{{ koji_version }}"
-  - "koji-hub-{{ koji_version }}"
-  - "koji-hub-plugins-{{ koji_version }}"
-  - "koji-web-{{ koji_version }}"
-  - "koji-utils-{{ koji_version }}"
+  - "koji-{{ koji_version }}.el8"
+  - "koji-hub-{{ koji_version }}.el8"
+  - "koji-hub-plugins-{{ koji_version }}.el8"
+  - "koji-web-{{ koji_version }}.el8"
+  - "koji-utils-{{ koji_version }}.el8"
   - git
   - gnupg2
   - krb5-workstation
