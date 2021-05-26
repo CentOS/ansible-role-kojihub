@@ -31,7 +31,9 @@
 - name: Ensuring we have some pkgs installed
   yum:
     name: "{{ kojihub_pkgs }}"
-    state: latest
+    state: installed
+  tags:
+    - pkgs
 
 - include_tasks: storage.yml
 - include_tasks: tls.yml
