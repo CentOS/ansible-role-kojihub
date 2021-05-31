@@ -24,8 +24,7 @@ KrbServerRealm = {{ koji_auth_realm }}
 {% if koji_auth_tls %}
 # SSL authentication options
 WebCert = /etc/pki/koji/{{ koji_hub_tls_cert }}
-ClientCA = /etc/pki/koji/{{ koji_hub_cacert }}
-KojiHubCA = /etc/pki/koji/{{ koji_hub_cacert }}
+# KojiHubCA = /etc/pki/koji/{{ koji_hub_cacert }} # not needed anymore (see https://pagure.io/koji/issue/2878)
 {% endif %}
 
 LoginTimeout = 72
