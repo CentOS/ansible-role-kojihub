@@ -192,4 +192,6 @@ kojihub_zabbix_templates:
 kojihub_zabbix_groups:
   - CentOS CBS koji hosts
 
-
+# Making koji offline for maintainance purposes
+koji_hub_offline: False
+koji_hub_outage_message: "Maintenance: Koji is currently going through maintainance, please check #centos-devel for more info"

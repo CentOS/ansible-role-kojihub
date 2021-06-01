@@ -89,9 +89,15 @@ Plugins = {% for plugin in koji_hub_plugins_list + koji_hub_noconfig_plugins_lis
 # KojiTraceback = normal
 
 ## These options are intended for planned outages
+{% if koji_hub_offline %}
+ServerOffline = True
+OfflineMessage = {{ koji_hub_outage_message }}
+LockOut = True
+{% else %}
 # ServerOffline = False
 # OfflineMessage = temporary outage
 # LockOut = False
+{% endif %}
 ## If ServerOffline is True, the server will always report a ServerOffline fault (with
 ## OfflineMessage as the fault string).
 ## If LockOut is True, the server will report a ServerOffline fault for all non-admin
