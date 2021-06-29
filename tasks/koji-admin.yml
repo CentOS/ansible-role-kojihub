@@ -58,6 +58,7 @@
         - regen_all_buildroots.sh
         - cbs-fas-sync.sh
         - regen_build_repos.sh
+        - epel-pull
 
     - name: Importing SIG config files
       copy:
@@ -76,4 +77,16 @@
     hour: "{{ koji_regen_repo_hour }}"
     user: "{{ koji_admin_user }}"
   when: koji_regen_repo_cron
+
+- name: Cron job pull epel content
+  cron:
+    name: "CentOS cbs epel internal mirror"
+    job: "/opt/cbs-tools/scripts/epel-pull > /dev/null 2>&1"
+    minute: '0'
+    hour: '3'
+    user: "{{ koji_admin_user }}"
+  when: koji_cbs_sigs_config
+  tags:
+    - cbs-tools
+
 

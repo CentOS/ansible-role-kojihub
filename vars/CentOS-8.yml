@@ -9,6 +9,7 @@ kojihub_pkgs:
   - krb5-workstation
   - python3-paho-mqtt
   - python3-configparser
+  - createrepo_c
 
 psql_client_pkgs:
   - postgresql
