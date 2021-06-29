@@ -3,7 +3,7 @@ rsync_host="download-cc-rdu01.fedoraproject.org"
 rsync_module="fedora-epel"
 local_mirror_basedir="/mnt/koji/repos/epel"
 
-for repo_path in 7 8/Everything; do
+for repo_path in 7 8/Everything next/8/Everything; do
   for arch in x86_64 ppc64le aarch64 ; do
     test -d ${local_mirror_basedir}/${repo_path}/${arch}/Packages/ || mkdir -p ${local_mirror_basedir}/${repo_path}/${arch}/Packages/
     rsync ${rsync_host}::${rsync_module}/${repo_path}/${arch}/Packages/ ${local_mirror_basedir}/${repo_path}/${arch}/Packages/ -aH 2>&1 >/dev/null 
