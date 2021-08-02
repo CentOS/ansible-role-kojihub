@@ -87,6 +87,7 @@ def get_users_perms_from_file():
                 userlist[user].append('image')
                 userlist[user].append('livecd')
                 userlist[user].append('appliance')
+                userlist[user].append('livemedia')
 
     return userlist if len(userlist) else None
 
