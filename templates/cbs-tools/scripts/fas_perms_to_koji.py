@@ -39,7 +39,7 @@ CLIENTCA_CERT = os.path.expanduser('/etc/pki/koji/{{ koji_hub_cacert }}')
 SERVERCA_CERT = os.path.expanduser('/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt')
 FASDUMP = '/etc/bsadmin/groups'
 SYSTEM_USERS = [{% for user in koji_system_users -%} '{{ user }}', {% endfor %}]
-IMAGE_PERM = ['virt', 'cloud', 'atomic', 'cloudinstance']
+IMAGE_PERM = ['virt', 'cloud', 'atomic', 'cloudinstance', 'hyperscale']
 
 def get_user_list():
     users = [(x['name'], x['id']) for x in kojiclient.listUsers()]
@@ -85,6 +85,8 @@ def get_users_perms_from_file():
             userlist[user].append('build')
             if sig in IMAGE_PERM:
                 userlist[user].append('image')
+                userlist[user].append('livecd')
+                userlist[user].append('appliance')
 
     return userlist if len(userlist) else None
 
