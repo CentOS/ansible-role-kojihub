@@ -58,7 +58,7 @@
         - regen_all_buildroots.sh
         - cbs-fas-sync.sh
         - regen_build_repos.sh
-        - epel-pull
+        - cbs-repos-pull
 
     - name: Importing SIG config files
       copy:
