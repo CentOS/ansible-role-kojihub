@@ -78,10 +78,10 @@
     user: "{{ koji_admin_user }}"
   when: koji_regen_repo_cron
 
-- name: Cron job pull epel content
+- name: Cron job pull external repos content for CBS
   cron:
     name: "CentOS cbs epel internal mirror"
-    job: "/opt/cbs-tools/scripts/epel-pull > /dev/null 2>&1"
+    job: "/opt/cbs-tools/scripts/cbs-repos-pull > /dev/null 2>&1"
     minute: '0'
     hour: '3'
     user: "{{ koji_admin_user }}"

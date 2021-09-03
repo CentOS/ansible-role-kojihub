@@ -10,6 +10,7 @@ kojihub_pkgs:
   - python3-paho-mqtt
   - python3-configparser
   - createrepo_c
+  - yum-utils
 
 psql_client_pkgs:
   - postgresql

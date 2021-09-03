@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# First the epel repositories
 rsync_host="download-cc-rdu01.fedoraproject.org"
 rsync_module="fedora-epel"
 local_mirror_basedir="/mnt/koji/repos/epel"
@@ -13,4 +15,10 @@ for repo_path in 7 8/Everything next/8/Everything; do
   done
 done
 
+# Now CentOS Stream 9 buildroots
+download_dir="/mnt/kojishare/koji/repos/c9s-buildroot/"
+
+for arch in x86_64 ppc64le aarch64; do 
+  reposync --quiet --repofrompath=${arch},"https://kojihub.stream.centos.org/kojifiles/repos/c9s-build/latest/${arch}/" --repoid=${arch} --downloaddir=${download_dir} --download-metadata  >/dev/null 2>&1
+done
 
