@@ -85,7 +85,7 @@
     minute: '0'
     hour: '3'
     user: "{{ koji_admin_user }}"
-  when: koji_cbs_sigs_config
+  when: koji_cbs_reposync
   tags:
     - cbs-tools
 

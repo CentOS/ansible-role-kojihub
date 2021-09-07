@@ -28,9 +28,6 @@ keytab = /etc/kojira/{{ koji_kojira_keytab }}
 ;client certificate
 cert = /etc/pki/koji/{{ koji_kojira_tls_pem }}
 
-;certificate of the CA that issued the client certificate
-ca = /etc/pki/koji/{{ koji_hub_cacert }}
-
 ;certificate of the CA that issued the HTTP server certificate
 serverca = /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt
 
@@ -55,6 +52,9 @@ ignore_tags = {{ koji_kojira_ignored_tags }}
 ; when they change. Note that you need to have your database set to use UTC,
 ; as otherwise you can end with weird behaviour. For details see
 ; https://pagure.io/koji/issue/2159
+{% if koji_kojira_check_external_repos %}
+check_external_repos = true
+{% else %}
 ; check_external_repos = false
-
+{% endif %}
 

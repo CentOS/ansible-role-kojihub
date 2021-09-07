@@ -102,6 +102,9 @@ koji_kojira_ignored_tags: '*el6* *el5*'
 # default values:
 kojira_delete_repo_lifetime: '172800'
 kojira_dist_repo_lifetime: '172800'
+# Do we want to have kojira checking for external repositories ?
+# If True it will automatically kick regen-repo when upstream repos are updated
+koji_kojira_check_external_repos: False
 
 # Do we want to regen-repo on regular basis/cron
 koji_regen_repo_cron: False
@@ -133,6 +136,10 @@ koji_fasjson_keytab:   # keytab file distributed by this role
 # Do we need some SIGs default configs for CBS ?
 # This will also import all cbs scripts/snippet specific for some cbs.c.o operations
 koji_cbs_sigs_config: False
+# IF cbs content, do we want to also sync external repo
+# like centos 9 stream buildroot or epel
+koji_cbs_reposync: False
+
 # If we sync from fas/ipa, which sig-<name> do we want to eventually exclude for koji perms
 koji_fas_excluded_groups:
   - hpv
