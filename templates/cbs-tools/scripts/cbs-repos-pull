@@ -20,5 +20,6 @@ download_dir="/mnt/kojishare/koji/repos/c9s-buildroot/"
 
 for arch in x86_64 ppc64le aarch64; do 
   reposync --quiet --repofrompath=${arch},"https://kojihub.stream.centos.org/kojifiles/repos/c9s-build/latest/${arch}/" --repoid=${arch} --downloaddir=${download_dir} --download-metadata  >/dev/null 2>&1
+  chown --quiet -R 755 ${download_dir}/${arch}
 done
 
