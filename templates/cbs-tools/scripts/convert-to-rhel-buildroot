@@ -1,0 +1,55 @@
+#!/bin/bash
+tag="$1"
+
+if [ -z $tag ] ; then
+  echo "You need to call this script with the -el8-build tag as argument"
+  echo "example: $0 infra8-common-test-el8-build"
+  exit 1
+fi
+
+enabled_repos=$(koji taginfo ${tag}|grep centos8|awk '{print $2}')
+echo "Analysing repositories to switch to RHEL8 ..."
+echo "Current CentOS Repositories enabled on tag [$tag]:"
+echo "================================================"
+echo "${enabled_repos}"
+echo "================================================"
+echo ""
+for repo in ${enabled_repos} ; do
+  if [ "$repo" == 'centos8-cr' ] ; then
+    echo " => Removing CR repository on tag [${tag}]"
+    koji remove-external-repo ${repo} ${tag}
+  elif [ "$repo" == 'centos8-extras' ] ; then
+    echo " => Removing Extras repository on tag [${tag}]"
+    koji remove-external-repo ${repo} ${tag}
+  elif [ "$repo" == 'centos8-devel' ] ; then
+    echo " => Removing Devel repository on tag [${tag}]"
+    koji remove-external-repo ${repo} ${tag}
+  elif [ "$repo" == 'centos8-powertools' ] ; then
+    echo " => Converting PowerTools to CRB on tag [${tag}]" 	  
+    koji remove-external-repo ${repo} ${tag}
+    koji add-external-repo --tag=${tag} --mode bare rhel8-crb
+  elif [ "$repo" == 'centos8-appstream' ] ; then
+    echo " => Converting Appstream to RHEL8 appstream"	  
+    koji remove-external-repo ${repo} ${tag}
+    koji add-external-repo --tag=${tag} --mode bare rhel8-appstream
+  elif [ "$repo" == 'centos8-baseos' ] ; then
+    echo " => Converting BaseOS to RHEL8 baseos"	  
+    koji remove-external-repo ${repo} ${tag}
+    koji add-external-repo --tag=${tag} --mode bare rhel8-baseos
+  elif [ "$repo" == 'centos8-ha' ] ; then
+    echo " => Converting HighAvailability to RHEL8 ha"	  
+    koji remove-external-repo ${repo} ${tag}
+    koji add-external-repo --tag=${tag} --mode bare rhel8-ha
+  else
+    echo "Error detecting matching repo [${repo}]"	  
+  fi  
+done	
+
+echo "CBS tag [$tag] modified (if needed)"
+rhel_enabled_repos=$(koji taginfo ${tag}|grep rhel8|awk '{print $2}')
+echo "Current RHEL Repositories enabled on tag [$tag]:"
+echo "================================================"
+echo "${rhel_enabled_repos}"
+echo "================================================"
+
+
