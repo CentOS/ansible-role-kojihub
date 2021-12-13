@@ -59,6 +59,7 @@
         - cbs-fas-sync.sh
         - regen_build_repos.sh
         - cbs-repos-pull
+        - convert-to-rhel-buildroot
 
     - name: Importing SIG config files
       copy:
