@@ -16,6 +16,8 @@ DBPass = {{ koji_db_pass }}
 DBHost = {{ koji_db_host }}
 {% endif %}
 KojiDir = {{ koji_mountpoint }}/koji
+MaxRequestLength = 167772160
+RLIMIT_AS = 10737418240
 
 {% if koji_auth_kerberos %}
 ##  Kerberos authentication options  ##
