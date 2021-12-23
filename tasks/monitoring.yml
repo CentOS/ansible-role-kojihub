@@ -11,3 +11,18 @@
     - monitoring
   when: zabbix_api_srv is defined
 
+- name: Specific local koji monitoring checks
+  template:
+    src: kojihub-monitoring-checks.j2
+    dest: /usr/lib/zabbix/kojihub-monitoring-checks
+    mode: 0755
+  tags:
+    - monitoring
+
+- name: monitoring cron job
+  cron:
+    name: koji zabbix checks
+    job: /usr/lib/zabbix/kojihub-monitoring-checks
+    minute: "*/2"
+  tags:
+    - monitoring

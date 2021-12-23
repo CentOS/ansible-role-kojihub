@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Managed by Ansible : don't edit !
+# Purposes : checks some services locally (like kojira or others) and send status to zabbix
+# Called by: cron
+#
+
+{% if koji_kojira %}
+# Checking if kojira service is still running as .service for systemd doesn't restart it on-failure :/
+/usr/bin/systemctl --quiet is-active kojira
+if [ "$?" -eq "0" ] ; then
+  zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k koji.kojira_status -o 0  >/dev/null 2>&1
+else
+  zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k koji.kojira_status -o 1  >/dev/null 2>&1
+fi
+{% endif %}
+
+

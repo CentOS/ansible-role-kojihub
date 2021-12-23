@@ -27,6 +27,7 @@
         - "{{ koji_web_cacert }}"
       notify:
         - restart_httpd
+        - restart_kojira
 
     - name: TLS keys for kojiweb
       copy:
