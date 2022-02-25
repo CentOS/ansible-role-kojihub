@@ -255,8 +255,6 @@ do
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.new_chroot=0"
-                        # FIXME : temporary lock -release tag for 9s while figuring out SIG mirror cdn/metalink
-                        $KOJI lock-tag --master $R_SIG-release
                     else
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-extras
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-updates
