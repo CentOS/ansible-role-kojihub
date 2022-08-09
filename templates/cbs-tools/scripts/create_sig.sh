@@ -9,13 +9,13 @@ This script generate new build target in koji for SIGS.
 
 OPTIONS:
    -a   ARCHES                   : Force arches e.g : "x86_64","aarch64 i686", etc...
-   -b                            : Enable non public bootstrap repo (SCLO SIG only)
-   -c   COLLECTION               : Enable collection in the buildroot e.g : mariadb100
-   -d   DISTRIBUTION             : 5 6 7 8 8s 9s
+   -s   SIG NAME                 : cloud
+   -d   DISTRIBUTION             : 7 8 8s 9 9s (8 and 9 will use RHEL buildroots)
    -p   SIG PROJECT NAME         : cloud6-<openstack>, sclo-<mariadb100>, etc...
    -r   SIG PROJECT RELEASE NAME : cloud6-openstack-<juno>
-   -s   SIG NAME                 : cloud
    -t   DISTTAGS                 : el7 el7.centos el8_0 el8s el9s el9
+   -b                            : Enable non public bootstrap repo (SCLO SIG only)
+   -c   COLLECTION               : Enable collection in the buildroot e.g : mariadb100
    -x                            : delete old -build tag and then recreate.
 EOF
 }
@@ -120,6 +120,8 @@ do
         ;;
         8s) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64 aarch64 ppc64le"; DEFAULT_DISTTAG="el8s"; BUILDROOT_PKGS_EXTRAS="centpkg-minimal"
         ;;
+        9) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64 aarch64 ppc64le"; DEFAULT_DISTTAG="el9"; BUILDROOT_PKGS_EXTRAS="centpkg-minimal"
+	;;	
         9s) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64 aarch64 ppc64le"; DEFAULT_DISTTAG="el9s"; BUILDROOT_PKGS_EXTRAS="centpkg-minimal"
         ;;
         *) echo "It seems your distribution el${DIST} is unsupported" && continue
@@ -128,11 +130,16 @@ do
 
     $KOJI list-tags | grep buildsys${DIST} &> /dev/null
     [ $? -gt 0 ] && echo " -> [ERROR] Something is wrong buildsys${DIST} tag not found." && continue
-
-    if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" || "x$DIST" == "x9s" ]]
+ 
+    # Parsing DIST and verifying if we need CentOS or RHEL in buildroot
+    if [[ "x$DIST" == "x8s" || "x$DIST" == "x9s" ]]
     then
         $KOJI list-external-repos | grep ^centos${DIST}-baseos &> /dev/null
         [ $? -gt 0 ] && echo " -> [ERROR] centos${DIST}-baseos external repo not configured in koji." && continue
+    elif [[ "x$DIST" == "x8" || "x$DIST" == "x9" ]]
+    then
+        $KOJI list-external-repos | grep ^rhel${DIST}-baseos &> /dev/null
+        [ $? -gt 0 ] && echo " -> [ERROR] rhel${DIST}-baseos external repo not configured in koji." && continue
     else
         $KOJI list-external-repos | grep ^centos${DIST}-os &> /dev/null
         [ $? -gt 0 ] && echo " -> [ERROR] centos${DIST}-os external repo not configured in koji." && continue
@@ -227,17 +234,7 @@ do
                     $KOJI add-tag --arches "$ARCHES" $R_SIG-$TAG-build
                     $KOJI add-target $R_SIG-$TAG $R_SIG-$TAG-build $R_SIG-candidate
                     # For external repo priorites are increased by 5, Priority 5
-                    if [[ "x$DIST" == "x7" || "x$DIST" == "x8" || "x$DIST" == "x8s" ]]
-                    then
-			            if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" ]]
-                        then
-                            $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-cr --mode bare
-                        else
-                            $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-cr
-                        fi
-                    fi
-                    if [[ "x$DIST" == "x8" ||  "x$DIST" == "x8s" ]]
-                    then
+                    if [[ "x$DIST" == "x8s" ]] ; then
                         if ( $HA_REPO_ENABLED )
                         then
                             $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-ha --mode bare
@@ -248,6 +245,16 @@ do
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-baseos --mode bare
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
+                    elif [[ "x$DIST" == "x9" ]] ; then
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build rhel${DIST}-baseos --mode bare
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build rhel${DIST}-appstream --mode bare
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build rhel${DIST}-crb --mode bare
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.new_chroot=0"
+                        # Locking -testing/-release tag until we know where they can land
+                        $KOJI lock-tag --master $R_SIG-testing
+                        $KOJI lock-tag --master $R_SIG-release
                     elif [[ "x$DIST" == "x9s" ]] ; then
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-baseos --mode bare
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-appstream --mode bare
@@ -286,7 +293,7 @@ do
                         $KOJI add-group-pkg $R_SIG-$TAG-build build $BUILDROOT_DEFAULT buildsys-macros-$REALTAG $BUILDROOT_PKGS_EXTRAS
                         $KOJI add-group-pkg $R_SIG-$TAG-build srpm-build $BUILDROOT_DEFAULT buildsys-macros-$REALTAG $BUILDROOT_PKGS_EXTRAS
                     fi
-                    if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" || "x$DIST" == "x9s" ]]
+                    if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" || "x$DIST" == "x9s" || "x$DIST" == "x9" ]]
                     then
                         $KOJI add-tag-inheritance --priority 5 $R_SIG-$TAG-build buildsys${DIST}-release
                     else
@@ -310,7 +317,7 @@ do
                         [ $? -eq 0 ] && echo "Adding $SIG-common-candidate as inheritance" && $KOJI add-tag-inheritance --priority 20 $R_SIG-$TAG-build $SIG-common-candidate
                     fi
                     # Check if disttag has corresponding buildsys-macros-disttag
-                    if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" || "x$DIST" == "x9s" ]]
+                    if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" || "x$DIST" == "x9s" || "x$DIST" == "x9" ]]
                     then
                         $KOJI list-tagged buildsys${DIST}-release | grep buildsys-macros-$REALTAG &> /dev/null
                     else
