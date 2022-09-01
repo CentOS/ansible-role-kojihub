@@ -252,9 +252,6 @@ do
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.new_chroot=0"
-                        # Locking -testing/-release tag until we know where they can land
-                        $KOJI lock-tag --master $R_SIG-testing
-                        $KOJI lock-tag --master $R_SIG-release
                     elif [[ "x$DIST" == "x9s" ]] ; then
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-baseos --mode bare
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-appstream --mode bare
