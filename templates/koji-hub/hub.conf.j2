@@ -73,7 +73,7 @@ DisableNotifications = True
 ## A space-separated list of plugins to load
 # Plugins = echo
 {% if koji_hub_plugins %}
-Plugins = {% for plugin in koji_hub_plugins_list + koji_hub_noconfig_plugins_list %}{{ plugin }} {% endfor %}
+Plugins = {% for plugin in koji_hub_plugins_list %}{{ plugin }} {% endfor %}
 {% endif %}
 
 ## If KojiDebug is on, the hub will be /very/ verbose and will report exception
