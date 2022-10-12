@@ -50,7 +50,7 @@
       shell: 
         chdir: /etc/pki/koji
         cmd: openssl crl -in crl.pem -text >/dev/null 2>&1 || openssl crl -inform DER -in crl.pem -outform PEM -out crl.pem
-    
+      when: new_crl is changed 
   tags:
     - tls
     - pki

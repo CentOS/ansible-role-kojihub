@@ -9,7 +9,9 @@
   delegate_to: "{{ zabbix_api_srv }}"  
   tags:
     - monitoring
-  when: zabbix_api_srv is defined
+  when: 
+    - zabbix_api_srv is defined
+    - zabbix_monitoring
 
 - name: Specific local koji monitoring checks
   template:
@@ -18,11 +20,18 @@
     mode: 0755
   tags:
     - monitoring
+  when: 
+    - zabbix_api_srv is defined
+    - zabbix_monitoring
+
 
 - name: monitoring cron job
   cron:
     name: koji zabbix checks
     job: /usr/lib/zabbix/kojihub-monitoring-checks
     minute: "*/2"
+  when: 
+    - zabbix_api_srv is defined
+    - zabbix_monitoring
   tags:
     - monitoring
