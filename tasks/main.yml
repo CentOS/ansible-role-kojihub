@@ -73,6 +73,8 @@
     dest: /
   when:
     - koji_custom_theme
+  tags:
+    - theme
 
 - name: Configuring httpd for kojihub/web
   template:
