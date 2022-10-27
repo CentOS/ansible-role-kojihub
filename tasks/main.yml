@@ -32,6 +32,7 @@
   yum:
     name: "{{ kojihub_pkgs }}"
     state: installed
+    update_cache: True
   tags:
     - pkgs
 
