@@ -35,6 +35,8 @@
     update_cache: True
   tags:
     - pkgs
+  notify:
+    - restart_httpd
 
 - include_tasks: storage.yml
 - include_tasks: tls.yml
