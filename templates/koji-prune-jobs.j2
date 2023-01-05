@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Don't edit, managed by Ansible
+# purposes: cleaning old scratch jobs  
+
+log_file="/var/log/koji-prune.log"
+
+echo "[+] $(date) => Searching for scratch builds older than [{{ koji_prune_scratch_jobs_retention }}] days and deleting ..." >> ${log_file} 
+
+find {{ koji_mountpoint }}/koji/scratch -mindepth 2 -type d -name 'task_*' -prune -mtime +{{ koji_prune_scratch_jobs_retention }} -exec rm -rf {} \; 2>&1 >> ${log_file}
+
+echo "[+] $(date) => Finished cleaning kojishare ====" >> ${log_file}

@@ -39,6 +39,10 @@
     - restart_httpd
 
 - include_tasks: storage.yml
+  tags:
+    - storage
+    - pruning
+
 - include_tasks: tls.yml
   tags:
     - tls

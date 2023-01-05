@@ -1,7 +1,7 @@
 # Default variables for kojihub role
 
 # Which koji version (RPM / ENVR style) we want to deploy (cherry-picking version from repository and not `latest`)
-koji_version: 1.23.0-1
+koji_version: 1.30.0-1
 
 # Do we need to use specific repo to deploy newer/specific koji pkgs
 kojid_kojihub_repo: False
@@ -119,6 +119,11 @@ koji_mash: False
 koji_mountpoint: /mnt/kojishare
 koji_nfs_path: nfs-host.domain.com:/exports/kojishare
 koji_mnt_symlink_workaround: True
+
+# Storage clean-up tasks
+# Do we want to prune old scratch jobs and what's the retention in days
+koji_prune_scratch_jobs: False
+koji_prune_scratch_jobs_retention: '7' 
 
 # Do we want to grant permissions based on group membership from FAS/ACO
 koji_fas_sync: True

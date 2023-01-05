@@ -41,4 +41,20 @@
     - work
     - scratch
 
-    
+- block:
+    - name: Distributing pruning jobs script
+      template:
+        src: koji-prune-jobs.j2
+        dest: /usr/libexec/centos/koji-prune-jobs
+        owner: root
+        mode: '0755'
+    - name: Scheduling pruning jobs script 
+      cron:
+        name: "Koji scratch jobs cleanup"
+        job: /usr/libexec/centos/koji-prune-jobs
+        minute: "40"
+        hour: "3"
+ 
+  when: koji_prune_scratch_jobs
+  tags:
+    - pruning
