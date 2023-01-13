@@ -35,3 +35,19 @@
     - zabbix_monitoring
   tags:
     - monitoring
+
+- block:
+    - name: Distribute kojihub TLS validity check script
+      template:
+        src: kojihub-tls-check.j2
+        dest: /usr/libexec/centos/kojihub-tls-check
+        mode: '0750'
+        owner: root
+    - name: Reporting TLS validity value to zabbix
+      cron:
+        name: kojihub tls cert check
+        job: /usr/libexec/centos/kojihub-tls-check
+        minute: '*/30'
+  when: koji_auth_tls
+  tags:
+    - monitoring    

@@ -1,0 +1,26 @@
+
+#!/bin/bash
+
+# This script will just locally verify TLS cert validity date and report to Zabbix
+
+function tls_check() {
+  tls_file="$1"
+  zabbix_key_name="$2"
+  end_date=$(openssl x509 -in /etc/pki/koji/${tls_file} -noout -text|sed -n 's/ *Not After : *//p')
+  end_date_seconds=$(date '+%s' --date "$end_date")
+  now_seconds=$(date '+%s')
+  remaining_days=$(echo "($end_date_seconds-$now_seconds)/24/3600" | bc)
+  zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k ${zabbix_key_name} -o ${remaining_days} >/dev/null
+}
+
+# now calling function
+# first is the tls cert and second is the key name at zabbix side
+tls_check {{ koji_hub_tls_cert }} kojihub_tls_validity
+
+{% if koji_admin_client %}
+tls_check {{koji_admin_pem }} kojihub_admin_tls_validity
+{% endif %}
+
+{% if koji_kojira %}
+tls_check {{ koji_kojira_tls_pem }} kojira_tls_validity
+{% endif %}
