@@ -42,6 +42,7 @@
   tags:
     - storage
     - pruning
+    - nfs
 
 - include_tasks: tls.yml
   tags:

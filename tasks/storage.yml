@@ -42,6 +42,59 @@
     - scratch
 
 - block:
+    - name: Additional koji volume[s] mount point[s] exist[s]
+      file:
+        path: "{{ item.dest }}"
+        state: directory
+        owner: apache
+        group: apache
+      with_items: "{{ koji_nfs_additional_mountpoints }}"
+
+    - name: Ensuring addtional volume[s] is/are defined
+      ansible.posix.mount:
+        src: "{{ item.src }}"
+        path: "{{ item.dest }}"
+        fstype: nfs
+        state: present
+      register: additional_mountpoints  
+      with_items: "{{ koji_nfs_additional_mountpoints }}"  
+      loop_control:
+        label: "{{ item.dest }}"
+      tags:
+        - nfs
+
+    - name: Ensuring addtional volume[s] is/are mounted
+      ansible.posix.mount:
+        src: "{{ item.item.src }}"
+        path: "{{ item.item.dest }}"
+        fstype: nfs
+        state: mounted  
+      with_items: "{{ additional_mountpoints.results }}"
+      when: item.changed
+      loop_control:
+        label: "{{ item.item.dest }}"
+      tags:
+        - nfs
+
+    - name: Ensuring some default directories for additional volume[s]
+      file:
+        path: "{{ item.0.dest }}/{{ item.1 }}"
+        state: directory
+        owner: apache
+        group: apache
+      with_nested:  
+        - "{{ koji_nfs_additional_mountpoints }}"
+        - ['packages', 'repos', 'repos-dist', 'work', 'scratch' ]
+      loop_control:
+        label: "{{ item.0.dest }}/{{ item.1 }}"
+      tags:
+        - nfs
+  when:
+    - koji_nfs_mount
+    - koji_nfs_mount_multi
+
+
+- block:
     - name: Distributing pruning jobs script
       template:
         src: koji-prune-jobs.j2

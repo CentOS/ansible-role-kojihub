@@ -116,9 +116,22 @@ koji_mash: False
 
 
 # Storage settings
+# We'll start with just one main volume but we'll add other options below for multi-volumes koji
+koji_nfs_mount: True
 koji_mountpoint: /mnt/kojishare
 koji_nfs_path: nfs-host.domain.com:/exports/kojishare
 koji_mnt_symlink_workaround: True
+
+# Koji multiple volumes setup (see https://docs.pagure.org/koji/volumes/)
+# Do we need other NFS volumes to be mounted ? and if so nfs path and dest (should be mounted *everywhere*)
+koji_nfs_mount_multi: False
+# If True, where do we mount these 
+koji_nfs_additional_mountpoints:
+  - src: nfs-host.domain.com:/exports/koji-vol-1
+    dest: /mnt/kojishare/koji/vol/vol1
+  - src: nfs-host2.domain.com:/exports/koji-vol-2
+    dest: /mnt/kojishare/koji/vol/vol2
+    
 
 # Storage clean-up tasks
 # Do we want to prune old scratch jobs and what's the retention in days
