@@ -134,9 +134,10 @@ koji_nfs_additional_mountpoints:
     
 
 # Storage clean-up tasks
-# Do we want to prune old scratch jobs and what's the retention in days
+# Do we want to prune old scratch/work jobs and what's the retention in days
 koji_prune_scratch_jobs: False
 koji_prune_scratch_jobs_retention: '7' 
+koji_prune_work_jobs_retention: '7'
 
 # Do we want to grant permissions based on group membership from FAS/ACO
 koji_fas_sync: True

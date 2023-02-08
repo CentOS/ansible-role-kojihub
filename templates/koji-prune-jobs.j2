@@ -1,12 +1,36 @@
 #!/bin/bash
 
 # Don't edit, managed by Ansible
-# purposes: cleaning old scratch jobs  
+# purposes: cleaning old scratch/work jobs  
+# Based on: 
+#   - https://pagure.io/koji-tools/raw/master/f/src/bin/koji-prune-work
+#   - https://pagure.io/koji-tools/blob/master/f/src/bin/koji-prune-scratch
 
 log_file="/var/log/koji-prune.log"
 
 echo "[+] $(date) => Searching for scratch builds older than [{{ koji_prune_scratch_jobs_retention }}] days and deleting ..." >> ${log_file} 
 
-find {{ koji_mountpoint }}/koji/scratch -mindepth 2 -type d -name 'task_*' -prune -mtime +{{ koji_prune_scratch_jobs_retention }} -exec rm -rf {} \; 2>&1 >> ${log_file}
+find {{ koji_mountpoint }}/koji/scratch -mindepth 2 -type d -name 'task_*' -prune -mtime +{{ koji_prune_scratch_jobs_retention }} -exec rm -rf {} \; >> ${log_file} 2>&1
+
+echo "[+] $(date) => Searching now for builds under directory [work] older than [{{ koji_prune_work_jobs_retention }}] days" >> ${log_file}
+
+# for tasks, remove old stuff which is not symlink in shorter time
+for x in $(find {{ koji_mountpoint }}/koji/work/tasks/ -mindepth 2 -maxdepth 2 -type d -mtime +{{ koji_prune_work_jobs_retention }}); do
+    find "$x" -xdev '!' -type d '!' -type l -print0 | xargs -0 -r rm -f 
+done
+
+# for tasks, try to remove as a unit on final date
+for x in $(find {{ koji_mountpoint }}/koji/work/tasks/ -mindepth 2 -maxdepth 2 -type d -mtime +{{ koji_prune_work_jobs_retention }}); do
+    find "$x" -xdev '!' -type d -print0 | xargs -0 -r rm -f 
+    find "$x" -xdev -depth -type d -print0 | xargs -0 -r rmdir
+done
+
+# for anything else, just remove old stuff
+# but don't remove the top level dirs (e.g. cli-build)
+for x in $(find {{ koji_mountpoint }}/koji/work -maxdepth 1 -mindepth 1 \! -name tasks); do
+    find "$x" -xdev '!' -type d -mtime +{{ koji_prune_work_jobs_retention }} -print0 | xargs -0 -r rm -f 
+    find "$x" -xdev -depth -mindepth 1 -type d -empty -print0 | xargs -0 -r rmdir 
+done
+
 
 echo "[+] $(date) => Finished cleaning kojishare ====" >> ${log_file}
