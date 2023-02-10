@@ -82,9 +82,26 @@ koji_auth_webkeytab: HTTP-stream-hub.dev.centos.org.keytab
 koji_auth_gssapi_localname: False
 
 # File that will be distributed and in {{ filestore }}/koji repo
-# Do we want to push a config file (probably reviewed elsewhere than ansible inventory
+# Do we want to push a config file (probably reviewed elsewhere than ansible inventory)
+# Important: it will run under koji_admin_client (see below) account so should be configured/enabled too
 kojihub_policy_file: True
 kojihub_policy_filename: policy.conf
+
+# Do we want to run koji-gc (Garbage Collector - see https://docs.pagure.org/koji/utils/#garbage-collector )
+# If true, which static (non .j2 template) file to distribute from {{ filestore }}/koji
+# Easier to have a single static file to review online (gitlab/github)
+kojihub_gc_enabled: False
+kojihub_gc_file: koji-gc.conf
+# We can define which koji_gc actions to trigger (see koji doc above)
+# example for all
+# kojihub_gc_actions:
+#   - prune
+#   - delete
+#   - trashcan
+#   - salvage
+kojihub_gc_actions: [ ]
+# Other cli options we want to use like `--test` to just dry-run koji-gc eventuall
+kojihub_gc_options: ''
 
 # Do we want to also run kojira
 # In case of TLS auth it needs a .pem file and in case of kerberos auth, a keytab

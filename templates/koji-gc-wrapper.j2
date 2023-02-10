@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Purposes: wrapper around koji-gc command (from koji-utils package - see https://docs.pagure.org/koji/utils/#garbage-collector) 
+# Called by: cron
+# Managed by: Ansible
+
+# Some variables
+log_file="/var/log/koji-gc.log"
+{% if koji_auth_kerberos %}
+koji_auth="--keytab /home/{{ koji_admin_user }}/{{ koji_admin_keytab }}"
+{% elif koji_auth_tls %}
+koji_auth="--cert /etc/pki/koji/{{ koji_admin_pem }}"
+{% else %}
+koji_auth=""
+{% endif %}
+
+# Some functions
+f_log() {
+   echo "[+] $(date +%Y%m%d-%H:%M) koji-gc -> $*" >>$log_file
+}
+
+koji_gc_action() {
+  /usr/sbin/koji-gc ${koji_auth} {{ kojihub_gc_options }} --config-file /home/{{ koji_admin_user }}/koji-gc.conf --lock-file=/var/tmp/koji-gc.lock --exit-on-lock --debug --action ${1} >> ${log_file} 2>&1
+}
+
+# Real work
+
+{% for action in kojihub_gc_actions %}
+f_log " === Starting koji-gc with option [{{ action }}] === "
+koji_gc_action {{ action }}
+f_log " === koji-gc with option [{{ action }}] now finished === "
+{% endfor %}

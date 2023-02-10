@@ -138,3 +138,8 @@
 - include_tasks: monitoring.yml 
   tags:
     - monitoring
+
+- include_tasks: koji-gc.yml
+  when: kojihub_gc_enabled
+  tags:
+    - koji-gc

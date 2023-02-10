@@ -1,0 +1,26 @@
+- block:
+    - name: Distribute koji-gc wrapper script
+      template: 
+        src: koji-gc-wrapper.j2 
+        dest: /usr/libexec/centos/koji-gc-wrapper
+        mode: '0750'
+        owner: "{{ koji_admin_user }}"
+
+    - name: Ensuring koji-gc log is writable
+      file:
+        path: /var/log/koji-gc.log
+        state: touch
+        owner: "{{ koji_admin_user }}"
+        mode: '0644'
+
+    - name: Scheduling koji-gc jobs script 
+      cron:
+        name: "Koji GC jobs cleanup"
+        job: /usr/libexec/centos/koji-gc-wrapper
+        user: "{{ koji_admin_user }}"
+        minute: "45"
+        hour: "5"
+        
+  when: kojihub_gc_enabled
+  tags:
+    - koji-gc
