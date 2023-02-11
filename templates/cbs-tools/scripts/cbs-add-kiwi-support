@@ -1,0 +1,32 @@
+#!/bin/bash
+
+read -p "CBS build tag to add kiwi support to (ends with -build) : " build_tag
+echo "Testing if [${build_tag}] exists ... "
+koji list-tags|grep -q ${build_tag}
+if [ "$?" -ne "0" ] ; then
+  echo "ERROR: [${build_tag}] build tag not found in koji"
+  exit
+fi
+
+echo " => adding kiwi support to [${build_tag}] ..."
+koji add-group ${build_tag} kiwi-build
+koji add-group-pkg ${build_tag} kiwi-build kiwi-cli kiwi-systemdeps distribution-gpg-keys 
+koji edit-tag ${build_tag} --extra="mock.new_chroot=0"
+
+read -p "Do you want to add additional repositories ? [y/n] : " other_repos
+
+if [ "$(echo ${other_repos}|tr [:lower:] [:upper:])" == "Y" ] ; then
+  echo "Which other (existing) external repositories do you want to add ?"
+  echo "all in one line , example : 'epel8 epel8-next"
+  read -p "Additional repositories : " repos
+  for repo in ${repos} ; do
+    echo " => Adding external repo [${repo}] to [${build_tag}] ..."
+    koji add-external-repo --mode=bare -t ${build_tag} ${repo}
+  done
+else
+  echo "No additional repo[s] added "
+fi
+
+echo " => Regenerating koji repositories for build tag [${build_tag}]"
+koji regen-repo ${build_tag}
+
