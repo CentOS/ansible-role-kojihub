@@ -97,7 +97,7 @@ kojihub_gc_file: koji-gc.conf
 # kojihub_gc_actions:
 #   - prune
 #   - delete
-#   - trashcan
+#   - trash
 #   - salvage
 kojihub_gc_actions: [ ]
 # Other cli options we want to use like `--test` to just dry-run koji-gc eventuall
