@@ -14,6 +14,7 @@ OPTIONS:
    -p   SIG PROJECT NAME         : cloud6-<openstack>, sclo-<mariadb100>, etc...
    -r   SIG PROJECT RELEASE NAME : cloud6-openstack-<juno>
    -t   DISTTAGS                 : el7 el7.centos el8_0 el8s el9s el9
+   -e	EXTREPOS		 : Additional repositories to add , e.g 'epel8 epel8-next' 
    -b                            : Enable non public bootstrap repo (SCLO SIG only)
    -c   COLLECTION               : Enable collection in the buildroot e.g : mariadb100
    -x                            : delete old -build tag and then recreate.
@@ -30,7 +31,7 @@ optionp=false
 optionr=false
 optionx=false
 
-while getopts ":hxba:d:s:t:c:p:r:" OPTION
+while getopts ":hxba:d:s:t:c:p:r:e:" OPTION
 do
         case $OPTION in
         h)
@@ -67,6 +68,10 @@ do
     c)
          optionc=true
          COLLECTIONS="${OPTARG}"
+         ;;
+    e)
+         optione=true
+         EXTREPOS="${OPTARG}"
          ;;
     x)
          optionx=true
@@ -245,6 +250,7 @@ do
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-baseos --mode bare
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
                     elif [[ "x$DIST" == "x9" ]] ; then
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build rhel${DIST}-baseos --mode bare
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build rhel${DIST}-appstream --mode bare
@@ -252,6 +258,7 @@ do
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.new_chroot=0"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
                     elif [[ "x$DIST" == "x9s" ]] ; then
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-baseos --mode bare
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-appstream --mode bare
@@ -259,10 +266,12 @@ do
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.new_chroot=0"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
                     else
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-extras
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-updates
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-os
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
                     fi
                     # START bootstrap
                     if ( $optionb )
@@ -289,6 +298,11 @@ do
                     else
                         $KOJI add-group-pkg $R_SIG-$TAG-build build $BUILDROOT_DEFAULT buildsys-macros-$REALTAG $BUILDROOT_PKGS_EXTRAS
                         $KOJI add-group-pkg $R_SIG-$TAG-build srpm-build $BUILDROOT_DEFAULT buildsys-macros-$REALTAG $BUILDROOT_PKGS_EXTRAS
+                    fi
+                    if ( $optione ) ; then
+                        for repo in ${EXTREPOS}; do  
+                          $KOJI add-external-repo --mode=bare -t $R_SIG-$TAG-build ${repo}
+                        done
                     fi
                     if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" || "x$DIST" == "x9s" || "x$DIST" == "x9" ]]
                     then
