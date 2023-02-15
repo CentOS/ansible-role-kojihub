@@ -15,6 +15,7 @@ OPTIONS:
    -r   SIG PROJECT RELEASE NAME : cloud6-openstack-<juno>
    -t   DISTTAGS                 : el7 el7.centos el8_0 el8s el9s el9
    -e	EXTREPOS		 : Additional repositories to add , e.g 'epel8 epel8-next' 
+   -i   INHERITANCE              : Additional tag-inheritance , e.g 'nfv9s-openvswitch-2-release'
    -b                            : Enable non public bootstrap repo (SCLO SIG only)
    -c   COLLECTION               : Enable collection in the buildroot e.g : mariadb100
    -x                            : delete old -build tag and then recreate.
@@ -31,7 +32,7 @@ optionp=false
 optionr=false
 optionx=false
 
-while getopts ":hxba:d:s:t:c:p:r:e:" OPTION
+while getopts ":hxba:d:s:t:c:p:r:e:i:" OPTION
 do
         case $OPTION in
         h)
@@ -64,6 +65,10 @@ do
     t)
          optiont=true
          TAGS="${OPTARG}"
+         ;;
+    i)
+         optioni=true
+         INHERITANCE_TAGS="${OPTARG}"
          ;;
     c)
          optionc=true
@@ -334,6 +339,14 @@ do
                     then
                         $KOJI list-tags | grep $SIG-common-candidate &> /dev/null
                         [ $? -eq 0 ] && echo "Adding $SIG-common-candidate as inheritance" && $KOJI add-tag-inheritance --priority 20 $R_SIG-$TAG-build $SIG-common-candidate
+                    fi
+                    # Testing for additional inherited tags
+                    if ( $optioni ) ; then
+                      low_priority="20"
+                      for inherited_tag in ${INHERITANCE_TAGS} ; do
+                        echo "Adding $inherited_tag inheritance"
+                        $KOJI add-tag-inheritance --priority $(( $low_priority + 5 )) $R_SIG-$TAG-build ${inherited_tag}
+                      done
                     fi
                     # Check if disttag has corresponding buildsys-macros-disttag
                     if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" || "x$DIST" == "x9s" || "x$DIST" == "x9" ]]
