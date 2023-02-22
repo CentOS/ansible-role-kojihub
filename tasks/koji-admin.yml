@@ -50,6 +50,7 @@
         - common6.sh
         - common7.sh
         - create_sig.sh
+        - cbs-add-kiwi-support
         - external_repos_updates.sh
         - fas_perms_to_koji.py
         - koji-group-sync.py
