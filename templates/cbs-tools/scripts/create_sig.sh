@@ -346,6 +346,7 @@ do
                       for inherited_tag in ${INHERITANCE_TAGS} ; do
                         echo "Adding $inherited_tag inheritance"
                         $KOJI add-tag-inheritance --priority $(( $low_priority + 5 )) $R_SIG-$TAG-build ${inherited_tag}
+                        export low_priority=$(( $low_priority + 5 ))   
                       done
                     fi
                     # Check if disttag has corresponding buildsys-macros-disttag
