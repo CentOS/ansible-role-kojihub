@@ -65,6 +65,8 @@
     - kojiweb/web.conf
   notify:
     - restart_httpd
+  tags:
+    - conf
 
 - name: Configuring koji policy
   copy:

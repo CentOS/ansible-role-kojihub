@@ -24,6 +24,7 @@ koji_sitename: CentOS Community Build Service
 koji_custom_theme: True
 koji_theme: centos
 koji_theme_file: koji-theme-centos.tar.gz
+koji_web_greeting: 'Welcome to Koji Web'
 koji_hub_url: https://koji.centos.org/kojihub
 koji_web_url: https://koji.centos.org/koji
 koji_files_url: https://koji.centos.org/kojifiles
