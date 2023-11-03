@@ -67,6 +67,7 @@
     - restart_httpd
   tags:
     - conf
+    - plugins
 
 - name: Configuring koji policy
   copy:

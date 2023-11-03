@@ -203,6 +203,7 @@ koji_admin_keytab: koji-admin.keytab # Needed only if koji_auth_kerberos above a
 # - fedmsg-koji-plugin  # sending to fedora-messaging/rabbitmq, only for specific builders
 # - sidetag_hub         # from koji plugins, so nothing to copy/import
 # - runroot_hub         # from koji plugins, so nothing to copy/import
+# - save_failed_tree    # from koji plugins, so nothing to copy/import
 # Each plugin can have its own config, see below
 # As we'll copy a conf for each, at least ensure there is (even empty) one under templates/koji-hub/plugins/{{ item }}.conf.j2 - see for example runroot_hub.conf.j2
 
