@@ -1,4 +1,10 @@
 - block:
+    - name: Configuring koji-gc policy
+      copy:
+        src: "{{ filestore }}/koji/{{ kojihub_gc_file }}"
+        dest: "/home/{{ koji_admin_user }}/koji-gc.conf"
+        mode: 0644
+
     - name: Distribute koji-gc wrapper script
       template: 
         src: koji-gc-wrapper.j2 
