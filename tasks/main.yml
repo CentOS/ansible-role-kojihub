@@ -98,6 +98,8 @@
     - kojiweb.conf
   notify:
     - restart_httpd
+  tags:
+    - httpd_config
 
 - block:
     - name: Importing kojihub keytab

@@ -3,8 +3,13 @@
 #
 # koji-hub is an xmlrpc interface to the Koji database
 #
+{% set koji_minor_version = koji_version.split('.')[1] %}
 
+{% if koji_minor_version|int > 31 %}
+Alias /kojihub /usr/share/koji-hub/kojiapp.py
+{% else %}
 Alias /kojihub /usr/share/koji-hub/kojixmlrpc.py
+{% endif%}
 
 <Directory "/usr/share/koji-hub">
     Options ExecCGI

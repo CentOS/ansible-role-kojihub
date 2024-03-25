@@ -1,7 +1,7 @@
 # Default variables for kojihub role
 
 # Which koji version (RPM / ENVR style) we want to deploy (cherry-picking version from repository and not `latest`)
-koji_version: 1.30.0-1
+koji_version: 1.34.0-3
 
 # Do we need to use specific repo to deploy newer/specific koji pkgs
 kojid_kojihub_repo: False

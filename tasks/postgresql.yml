@@ -73,7 +73,7 @@
     - db
 
 - name: Finding the schema to load in DB
-  shell: find /usr/share/doc -iname schema.sql|grep koji
+  shell: find /usr/share/koji -iname schema.sql|grep koji
   register: koji_sql_schema
   when: koji_created_db is changed or koji_remote_created_db is changed
   tags:
