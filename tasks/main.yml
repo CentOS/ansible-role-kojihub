@@ -6,13 +6,13 @@
   tags:
     - vars
 
-- include_role:
+- ansible.builtin.include_role:
     name: httpd
   vars:
     - httpd_tls: True
 
 - name: Add the kojihub repo if needed
-  template:
+  ansible.builtin.template:
     src: kojihub.repo.j2
     dest: /etc/yum.repos.d/kojihub.repo
     mode: 0644
@@ -29,7 +29,7 @@
     - repo
 
 - name: Ensuring we have some pkgs installed
-  yum:
+  ansible.builtin.yum:
     name: "{{ kojihub_pkgs }}"
     state: installed
     update_cache: True
@@ -56,7 +56,7 @@
 - include_tasks: selinux.yml
 
 - name: Configuring kojihub/web
-  template:
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "/etc/{{ item }}"
     mode: 0644
@@ -69,6 +69,14 @@
     - conf
     - plugins
 
+- name: Configuring robots.txt
+  copy:
+    src: robots.txt
+    dest: /var/www/common/robots.txt
+  tags:
+    - conf
+    - robots
+
 - name: Configuring koji policy
   copy:
     src: "{{ filestore }}/koji/{{ kojihub_policy_filename }}"
@@ -79,7 +87,7 @@
     - restart_httpd
 
 - name: Deploying koji custom theme
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ koji_theme_file }}"
     dest: /
   when:
@@ -88,7 +96,7 @@
     - theme
 
 - name: Configuring httpd for kojihub/web
-  template:
+  ansible.builtin.template:
     src: "httpd/{{ item }}.j2"
     dest: "/etc/httpd/conf.d/{{ item }}"
     mode: 0644
@@ -116,7 +124,7 @@
     
   when: koji_auth_kerberos
 
-- include_role:
+- ansible.builtin.include_role:
      name: krb5-client
   when: koji_auth_gssapi_localname
 

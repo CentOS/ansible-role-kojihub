@@ -1,6 +1,6 @@
 - block:
     - name: Specific PKI dir for koji
-      file:
+      ansible.builtin.file:
         path: /etc/pki/koji
         state: directory
 
@@ -40,7 +40,7 @@
         - restart_httpd
 
     - name: Ensuring we have initial crl 
-      get_url:
+      ansible.builtin.get_url:
         url: "{{ koji_hub_tls_crl_url }}"
         dest: /etc/pki/koji/crl.pem
       when: koji_auth_tls

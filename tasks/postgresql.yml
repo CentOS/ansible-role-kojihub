@@ -1,6 +1,6 @@
 - name: local Postgresql tasks
   block:
-  - include_role:
+  - ansible.builtin.include_role:
       name: postgresql
 
   - name: Creating pgsql/koji db user
@@ -19,7 +19,7 @@
     register: koji_created_db
   
   - name: Ensuring koji user has all rights on DB
-    postgresql_privs:
+    community.postgresql.postgresql_privs:
       db: "{{ koji_db_name }}"
       type: database
       privs: ALL
@@ -50,7 +50,7 @@
     register: koji_remote_created_db
   
   - name: Ensuring koji user has all rights on DB
-    postgresql_privs:
+    community.postgresql.postgresql_privs:
       db: "{{ koji_db_name }}"
       type: database
       privs: ALL
@@ -65,7 +65,7 @@
 
 
 - name: Ensuring we have local postgresql client and deps (in case of remote)
-  yum:
+  ansible.builtin.yum:
     name: "{{ psql_client_pkgs }}"
     state: installed
   when: koji_db_remote
@@ -81,7 +81,7 @@
 
 
 - name: Distributing init for koji admin and kojira users
-  template:
+  ansible.builtin.template:
     src: koji-pgsql-rights.sql.j2
     dest: /var/tmp/koji-pgsql-rights.sql
     mode: 0644
@@ -92,7 +92,7 @@
 - name: Local - Postgresql koji schema load
   block:
   - name: Load initial schema for Koji DB if needed
-    postgresql_db:
+    community.postgresql.postgresql_db:
       name: "{{ koji_db_name }}"
       target: "{{ koji_sql_schema.stdout }}"
       owner: "{{ koji_db_user }}"
@@ -101,7 +101,7 @@
     when: koji_created_db is changed or koji_remote_created_db is changed
      
   - name: Creating default koji admin and kojira users in DB
-    postgresql_db:
+    community.postgresql.postgresql_db:
       name: "{{ koji_db_name }}"
       target: /var/tmp/koji-pgsql-rights.sql
       state: restore
@@ -109,7 +109,7 @@
     when: koji_created_db is changed or koji_remote_created_db is changed
 
   - name: Ensuring koji user has all rights on DB
-    postgresql_privs:
+    community.postgresql.postgresql_privs:
       db: "{{ koji_db_name }}"
       role: "{{ koji_db_user }}"
       objs: ALL_IN_SCHEMA
@@ -127,7 +127,7 @@
 - name: Remote - Postgresql schema load
   block:
   - name: Load initial schema for Koji DB if needed
-    postgresql_db:
+    community.postgresql.postgresql_db:
       login_host: "{{ koji_db_host }}"
       login_user: "{{ koji_db_user }}"
       login_password: "{{ koji_db_pass }}"
@@ -138,7 +138,7 @@
     when: koji_created_db is changed or koji_remote_created_db is changed
     
   - name: Creating default koji admin and kojira users in DB
-    postgresql_db:
+    community.postgresql.postgresql_db:
       login_host: "{{ koji_db_host }}"
       login_user: "{{ koji_db_user }}"
       login_password: "{{ koji_db_pass }}"
@@ -148,7 +148,7 @@
     when: koji_created_db is changed or koji_remote_created_db is changed
 
   - name: Ensuring koji user has all rights on DB
-    postgresql_privs:
+    community.postgresql.postgresql_privs:
       db: "{{ koji_db_name }}"
       role: "{{ koji_db_user }}"
       objs: ALL_IN_SCHEMA

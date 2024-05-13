@@ -1,16 +1,16 @@
 - name: Creating local koji admin user if needed
-  user:
+  ansible.builtin.user:
     name: "{{ koji_admin_user }}"
     comment: "Local koji admin"
 
 - name: Creating dir for koji config
-  file:
+  ansible.builtin.file:
     path: "/home/{{ koji_admin_user}}/.koji"
     state: directory
     owner: "{{ koji_admin_user }}"
 
 - name: Configuring koji client for admin
-  template:
+  ansible.builtin.template:
     src: koji-client-config.j2
     dest: "/home/{{ koji_admin_user}}/.koji/config"
     owner: "{{ koji_admin_user }}"
@@ -33,14 +33,14 @@
   
 - block:
     - name: Ensuring we have scripts directory
-      file:
+      ansible.builtin.file:
         path : /opt/cbs-tools/scripts
         state: directory
         mode: 0750
         owner: "{{ koji_admin_user }}"
 
     - name: Importing all needed scripts
-      template:
+      ansible.builtin.template:
         src: "cbs-tools/scripts/{{ item }}"
         dest: /opt/cbs-tools/scripts/
         owner: "{{ koji_admin_user }}"
@@ -72,7 +72,7 @@
     - cbs-tools
 
 - name: Cron job to verify external repositories in koji
-  cron:
+  ansible.builtin.cron:
     name: "CentOS Koji regen repo task"
     job: "/opt/cbs-tools/scripts/regen_build_repos.sh > /dev/null 2>&1"
     minute: "{{ koji_regen_repo_min }}"
@@ -81,7 +81,7 @@
   when: koji_regen_repo_cron
 
 - name: Cron job pull external repos content for CBS
-  cron:
+  ansible.builtin.cron:
     name: "CentOS cbs epel internal mirror"
     job: "/opt/cbs-tools/scripts/cbs-repos-pull > /dev/null 2>&1"
     minute: '0'

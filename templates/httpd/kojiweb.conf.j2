@@ -11,6 +11,8 @@ RewriteRule  ^/$    /koji [R,L]
 
 # Adding alias for /repos
 Alias /repos {{ koji_mountpoint }}/repos
+Alias /robots.txt /var/www/common/robots.txt
+
 
 <Directory "{{ koji_mountpoint }}/repos">
    Options Indexes FollowSymLinks

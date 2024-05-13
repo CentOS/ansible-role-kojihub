@@ -13,14 +13,14 @@
         owner: "{{ koji_admin_user }}"
 
     - name: Ensuring koji-gc log is writable
-      file:
+      ansible.builtin.file:
         path: /var/log/koji-gc.log
         state: touch
         owner: "{{ koji_admin_user }}"
         mode: '0644'
 
     - name: Scheduling koji-gc jobs script 
-      cron:
+      ansible.builtin.cron:
         name: "Koji GC jobs cleanup"
         job: /usr/libexec/centos/koji-gc-wrapper
         user: "{{ koji_admin_user }}"

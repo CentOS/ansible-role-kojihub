@@ -1,6 +1,6 @@
 - block:
     - name: Configuring agent in Zabbix server
-      include_role:
+      ansible.builtin.include_role:
         name: zabbix-server
         tasks_from: agent_config
       vars:
@@ -14,7 +14,7 @@
     - zabbix_monitoring
 
 - name: Specific local koji monitoring checks
-  template:
+  ansible.builtin.template:
     src: kojihub-monitoring-checks.j2
     dest: /usr/lib/zabbix/kojihub-monitoring-checks
     mode: 0755
@@ -26,7 +26,7 @@
 
 
 - name: monitoring cron job
-  cron:
+  ansible.builtin.cron:
     name: koji zabbix checks
     job: /usr/lib/zabbix/kojihub-monitoring-checks
     minute: "*/2"
@@ -38,13 +38,13 @@
 
 - block:
     - name: Distribute kojihub TLS validity check script
-      template:
+      ansible.builtin.template:
         src: kojihub-tls-check.j2
         dest: /usr/libexec/centos/kojihub-tls-check
         mode: '0750'
         owner: root
     - name: Reporting TLS validity value to zabbix
-      cron:
+      ansible.builtin.cron:
         name: kojihub tls cert check
         job: /usr/libexec/centos/kojihub-tls-check
         minute: '*/30'

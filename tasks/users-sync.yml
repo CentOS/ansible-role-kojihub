@@ -1,19 +1,19 @@
 # This task will allow koji to grab users from FAS/ACO and grant/remove build rights based on group membership
 
 - name: Installing required python pkgs
-  yum:
+  ansible.builtin.yum:
     name: "{{ kojihub_users_sync_pkgs }}"
     state: installed
 
 - name: Ensuring we have a dir for bsadmin tool
-  file:
+  ansible.builtin.file:
     path: /etc/bsadmin
     state: directory
     owner: "{{ koji_admin_user }}"
     mode: 0750
 
 - name: Configuring sync tool
-  template:
+  ansible.builtin.template:
     src: bsadmin.conf.j2
     dest: /etc/bsadmin/bsadmin.conf
     mode: 0644
@@ -28,7 +28,7 @@
   when: koji_fasjson_sync
 
 - name: Cron job to sync FAS/Koji
-  cron:
+  ansible.builtin.cron:
     name: "CentOS ACO-koji sync"
     job: "/opt/cbs-tools/scripts/cbs-fas-sync.sh > /dev/null 2>&1"
     minute: "*/7"

@@ -10,7 +10,7 @@
     - plugins
  
 - name: Configuring enabled plugins
-  template:
+  ansible.builtin.template:
     src: "koji-hub/plugins/{{ item }}.conf.j2"
     dest: "/etc/koji-hub/plugins/{{ item }}.conf"
     mode: 0644
@@ -20,7 +20,7 @@
     - plugins
 
 - name: Configuring enabled plugins with the wrong config filename
-  template:
+  ansible.builtin.template:
     src: "koji-hub/plugins/sidetag_hub.conf.j2"
     dest: "/etc/koji-hub/plugins/sidetag.conf"
     mode: 0644
@@ -31,7 +31,7 @@
 
 - block:
     - name: Importing fedora-messaging role
-      include_role:
+      ansible.builtin.include_role:
         name: fedora-messaging-client
       vars:
         fedora_messaging_tls_certs: True
@@ -40,13 +40,13 @@
         fedora_messaging_tls_ca: "{{ koji_hub_plugin_fedmsg_tls_ca }}"
 
     - name: Configuring fedora messaging
-      template:
+      ansible.builtin.template:
         src: koji-hub/plugins/fedora-messaging.toml.j2
         dest: /etc/fedora-messaging/config.toml
       notify: restart_httpd
 
     - name: Turning on boolean for fedora-messaging script/call
-      seboolean:
+      ansible.posix.seboolean:
         name: httpd_execmem
         persistent: yes
         state: yes

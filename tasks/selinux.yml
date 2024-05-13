@@ -1,5 +1,5 @@
 - name: Ensuring we have some booleans turned on for kojihub/web
-  seboolean:
+  ansible.posix.seboolean:
     name: "{{ item }}"
     persistent: yes
     state: yes
