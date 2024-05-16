@@ -150,7 +150,7 @@ do
     then
         $KOJI list-external-repos | grep ^centos${DIST}-baseos &> /dev/null
         [ $? -gt 0 ] && echo " -> [ERROR] centos${DIST}-baseos external repo not configured in koji." && continue
-    elif [[ "x$DIST" == "x8" || "x$DIST" == "x9" || "x$DIST" == "x10" ]]
+    elif [[ "x$DIST" == "x8" || "x$DIST" == "x9" || "x$DIST" == "x10"  ]]
     then
         $KOJI list-external-repos | grep ^rhel${DIST}-baseos &> /dev/null
         [ $? -gt 0 ] && echo " -> [ERROR] rhel${DIST}-baseos external repo not configured in koji." && continue
