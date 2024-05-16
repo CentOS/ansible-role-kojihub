@@ -134,6 +134,10 @@ do
 	;;	
         9s) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64 aarch64 ppc64le"; DEFAULT_DISTTAG="el9s"; BUILDROOT_PKGS_EXTRAS="centpkg-minimal"
         ;;
+        10) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64 aarch64 ppc64le"; DEFAULT_DISTTAG="el10"; BUILDROOT_PKGS_EXTRAS="centpkg-minimal"
+        ;;
+        10s) echo "* Checking distribution el$DIST configuration...";  ( ! $optiona ) && ARCHES="x86_64 aarch64 ppc64le"; DEFAULT_DISTTAG="el10s"; BUILDROOT_PKGS_EXTRAS="centpkg-minimal"
+        ;;
         *) echo "It seems your distribution el${DIST} is unsupported" && continue
         ;;
     esac
@@ -142,11 +146,11 @@ do
     [ $? -gt 0 ] && echo " -> [ERROR] Something is wrong buildsys${DIST} tag not found." && continue
  
     # Parsing DIST and verifying if we need CentOS or RHEL in buildroot
-    if [[ "x$DIST" == "x8s" || "x$DIST" == "x9s" ]]
+    if [[ "x$DIST" == "x8s" || "x$DIST" == "x9s" || "x$DIST" == "x10s" ]]
     then
         $KOJI list-external-repos | grep ^centos${DIST}-baseos &> /dev/null
         [ $? -gt 0 ] && echo " -> [ERROR] centos${DIST}-baseos external repo not configured in koji." && continue
-    elif [[ "x$DIST" == "x8" || "x$DIST" == "x9" ]]
+    elif [[ "x$DIST" == "x8" || "x$DIST" == "x9" || "x$DIST" == "x10"]]
     then
         $KOJI list-external-repos | grep ^rhel${DIST}-baseos &> /dev/null
         [ $? -gt 0 ] && echo " -> [ERROR] rhel${DIST}-baseos external repo not configured in koji." && continue
@@ -280,6 +284,20 @@ do
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.new_chroot=0"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
+                    elif [[ "x$DIST" == "x10" ]] ; then
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build rhel${DIST}-baseos --mode bare
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build rhel${DIST}-appstream --mode bare
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build rhel${DIST}-crb --mode bare
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
+                    elif [[ "x$DIST" == "x10s" ]] ; then
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-baseos --mode bare
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-appstream --mode bare
+                        $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-crb --mode bare
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
                     else
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-extras
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-updates
@@ -317,7 +335,7 @@ do
                           $KOJI add-external-repo --mode=bare -t $R_SIG-$TAG-build ${repo}
                         done
                     fi
-                    if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" || "x$DIST" == "x9s" || "x$DIST" == "x9" ]]
+                    if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" || "x$DIST" == "x9s" || "x$DIST" == "x9" || "x$DIST" == "x10s" || "x$DIST" == "x10" ]]
                     then
                         $KOJI add-tag-inheritance --priority 5 $R_SIG-$TAG-build buildsys${DIST}-release
                     else
@@ -350,7 +368,7 @@ do
                       done
                     fi
                     # Check if disttag has corresponding buildsys-macros-disttag
-                    if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" || "x$DIST" == "x9s" || "x$DIST" == "x9" ]]
+                    if [[ "x$DIST" == "x8" || "x$DIST" == "x8s" || "x$DIST" == "x9s" || "x$DIST" == "x9" || "x$DIST" == "x10s" || "x$DIST" == "x10" ]]
                     then
                         $KOJI list-tagged buildsys${DIST}-release | grep buildsys-macros-$REALTAG &> /dev/null
                     else
