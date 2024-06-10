@@ -30,7 +30,20 @@
     owner: "{{ koji_admin_user }}"
     mode: 0644
   when: koji_auth_kerberos
-  
+
+- block:
+    - name: koji sidetag cleanup
+      cron:
+        name: "koji sidetags cleanup"
+        job: "koji-sidetag-cleanup --empty-delay={{ koji_kojira_sidetag_cleanup_delay }} --old-delay={{ koji_kojira_sidetag_cleanup_delay }} --inactive-delay={{ koji_kojira_sidetag_cleanup_delay }} -s {{ koji_hub_url }} --keytab /home/{{ koji_admin_user }}/{{ koji_admin_keytab }} --principal {{ koji_admin_principal }}"
+        hour: "2"
+        minute: "35"
+        user: "{{ koji_admin_user }}"
+
+  when: koji_kojira_sidetag_cleanup
+  tags:
+    - sidetag-cleanup
+
 - block:
     - name: Ensuring we have scripts directory
       ansible.builtin.file:
