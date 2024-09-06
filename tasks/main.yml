@@ -83,6 +83,9 @@
     dest: "/etc/koji-hub/hub.conf.d/policy.conf"
     mode: 0644
   when: kojihub_policy_file
+  tags:
+    - conf
+    - policy
   notify:
     - restart_httpd
 
