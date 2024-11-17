@@ -237,6 +237,13 @@ koji_hub_plugin_fedmsg_tls_key:
 koji_hub_plugin_fedmsg_topic:
 koji_hub_plugin_fedmsg_amqp_url: "amqps://koji.prod:@rabbitmq.prod.fedoraproject.org/%2Fpubsub"
 
+# protonmsg plugin
+koji_hub_plugin_protonmsg_url: amqps://broker1.domaine.com:5671
+koji_hub_plugin_protonmsg_cert: my-amqp-cert.crt
+koji_hub_plugin_protonmsg_ca: my-amqp-ca.crt                      
+koji_hub_plugin_protonmsg_topic_prefix: VirtualTopic.topic
+koji_hub_plugin_protonmsg_queue_enabled: true   
+
 # Zabbix/monitoring part
 kojihub_zabbix_templates:
   - Template CentOS Koji Hub

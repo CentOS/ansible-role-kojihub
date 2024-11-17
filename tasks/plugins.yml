@@ -50,5 +50,21 @@
         name: httpd_execmem
         persistent: yes
         state: yes
+  tags:
+    - plugins
 
   when: "'fedmsg-koji-plugin' in koji_hub_plugins_list"
+
+- block:
+    - name: Distributing needed ca/crt for protonmsg
+      ansible.builtin.copy:
+        src: "{{ pkistore }}/umb/{{ item }}"
+        dest: "/etc/koji-hub/plugins/{{ item }}"
+      with_items:
+        - "{{ koji_hub_plugin_protonmsg_cert }}"
+        - "{{ koji_hub_plugin_protonmsg_ca }}"
+      notify: restart_httpd
+  tags:
+    - plugins
+    - protonmsg
+  when: "'protonmsg' in koji_hub_plugins_list"
