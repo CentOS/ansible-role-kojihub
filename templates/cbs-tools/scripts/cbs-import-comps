@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# Functions
+usage() {
+cat << EOF
+You need to call the script like this : $0 -arguments
+ -t : koji build tag to import comps into [required, example: altimages9s-images-live-el9s-build]
+ -r : repository to import comps from [required, possible values : BaseOS, AppStream, epel]
+ -h : display this help
+EOF
+
+}
+
+
+varcheck() {
+if [ -z "$1" ] ; then
+        usage
+        exit 1
+fi
+}
+
+while getopts "ht:r:" option
+do
+  case ${option} in
+    h)
+      usage
+      exit 1
+      ;;
+    t)
+     koji_tag=${OPTARG}
+      ;;
+    r)
+     repo="${OPTARG}"
+     ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+
+varcheck ${koji_tag}
+varcheck ${repo}
+
+sig_rel=$(echo $koji_tag|cut -f 1 -d '-')
+el_version=$(tr -dc '0-9' <<< $sig_rel)
+
+if [ "${repo}" == 'epel' ] ; then
+  baseurl="https://dl.fedoraproject.org/pub/epel/${el_version}/Everything/x86_64/"
+elif [ "${repo}" == "BaseOS" ] || [ "${repo}" == "AppStream" ] ; then
+  baseurl="http://mirror.stream.centos.org/${el_version}-stream/${repo}/x86_64/os/" 
+else
+  echo "Invalid repo choice : should be AppStream, BaseOS or epel"
+  exit 1
+fi
+
+test -d ~/workspace/comps/${el_version} || mkdir -p ~/workspace/comps/${el_version}
+pushd ~/workspace/comps/${el_version} >/dev/null
+echo " => Importing [${repo}] comps into [${koji_tag}]"
+
+comps_file=$(curl --location --silent ${baseurl}/repodata/repomd.xml|egrep '*comps*.*.xml"'|cut -f 2 -d "="|sed 's#"repodata/##'|sed 's#"/>##')
+curl --location --silent ${baseurl}/repodata/${comps_file} > ${repo}-${el_version}.xml
+koji import-comps ${repo}-${el_version}.xml ${koji_tag}
+
+popd >/dev/null
+
