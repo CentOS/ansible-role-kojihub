@@ -74,6 +74,7 @@
         - regen_build_repos.sh
         - cbs-repos-pull
         - convert-to-rhel-buildroot
+        - cbs-import-comps
 
     - name: Importing SIG config files
       copy:

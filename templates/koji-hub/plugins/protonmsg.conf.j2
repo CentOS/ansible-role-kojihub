@@ -1,0 +1,17 @@
+[broker]
+urls = {{ koji_hub_plugin_protonmsg_url }}
+cert = /etc/koji-hub/plugins/{{ koji_hub_plugin_protonmsg_cert }}
+cacert = /etc/koji-hub/plugins/{{ koji_hub_plugin_protonmsg_ca }}
+topic_prefix = {{ koji_hub_plugin_protonmsg_topic_prefix }}
+connect_timeout = 30
+send_timeout = 120
+
+[queue]
+enabled = {{ koji_hub_plugin_protonmsg_queue_enabled }}
+{% if koji_hub_plugin_protonmsg_queue_batch_size is defined %}
+batch_size = {{ koji_hub_plugin_protonmsg_queue_batch_size }}
+{% endif %}
+{% if koji_hub_plugin_protonmsg_queue_max_age is defined %}
+max_age = {{ koji_hub_plugin_protonmsg_queue_max_age }}
+{% endif %}
+
