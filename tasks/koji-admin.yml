@@ -44,6 +44,16 @@
   tags:
     - sidetag-cleanup
 
+- name: Ensuring DB housekeeping tasks for sessions
+  cron:
+    name: "Koji DB clean-up"
+    job: "/usr/sbin/koji-sweep-db"
+    hour: "4"
+    minute: "34"
+    weekday: "6"
+  tags:
+    - db-maintenance
+
 - block:
     - name: Ensuring we have scripts directory
       ansible.builtin.file:

@@ -135,6 +135,7 @@
   when: koji_admin_client
   tags:
     - cbs-tools
+    - db-maintenance
 
 - include_tasks : plugins.yml
   tags:
