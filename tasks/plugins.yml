@@ -68,3 +68,15 @@
     - plugins
     - protonmsg
   when: "'protonmsg' in koji_hub_plugins_list"
+
+- block:
+    - name: Installing required pkgs for image_builder plugin
+      ansible.builtin.yum:
+        name: koji-image-builder-hub
+        state: installed
+      notify: restart_httpd  
+  tags:
+    - image_builder
+    - plugins
+  when: "'image_builder' in koji_hub_plugins_list"
+    
