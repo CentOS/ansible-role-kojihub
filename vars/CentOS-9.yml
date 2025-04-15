@@ -1,0 +1,19 @@
+kojihub_pkgs:
+  - "koji-{{ koji_version }}.el9"
+  - "koji-hub-{{ koji_version }}.el9"
+  - "koji-hub-plugins-{{ koji_version }}.el9"
+  - "koji-web-{{ koji_version }}.el9"
+  - "koji-utils-{{ koji_version }}.el9"
+  - git
+  - gnupg2
+  - krb5-workstation
+  - python3-paho-mqtt
+  - createrepo_c
+  - yum-utils
+
+psql_client_pkgs:
+  - postgresql
+  - python3-psycopg2
+
+kojihub_users_sync_pkgs:
+  - python3-requests-gssapi
