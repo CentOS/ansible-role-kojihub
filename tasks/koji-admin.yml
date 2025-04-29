@@ -3,11 +3,14 @@
     name: "{{ koji_admin_user }}"
     comment: "Local koji admin"
 
-- name: Creating dir for koji config
+- name: Creating dir for koji user
   ansible.builtin.file:
-    path: "/home/{{ koji_admin_user}}/.koji"
+    path: "/home/{{ koji_admin_user}}/{{ item }}"
     state: directory
     owner: "{{ koji_admin_user }}"
+  with_items:
+    - .koji
+    - bin
 
 - name: Configuring koji client for admin
   ansible.builtin.template:
@@ -53,6 +56,16 @@
     weekday: "6"
   tags:
     - db-maintenance
+
+- name: Distributing some wrapper scripts
+  template:
+    src: "tools/{{ item }}"
+    dest: "/home/{{ koji_admin_user }}/bin/{{ item }}"
+    mode: '0755'
+  with_items:
+    - koji-disable-builders
+    - koji-enable-builders
+  
 
 - block:
     - name: Ensuring we have scripts directory

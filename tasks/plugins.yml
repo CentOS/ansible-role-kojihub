@@ -72,7 +72,9 @@
 - block:
     - name: Installing required pkgs for image_builder plugin
       ansible.builtin.yum:
-        name: koji-image-builder-hub
+        name: 
+          - koji-image-builder-hub
+          - koji-image-builder-cli
         state: installed
       notify: restart_httpd  
   tags:

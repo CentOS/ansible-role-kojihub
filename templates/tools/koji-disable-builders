@@ -1,0 +1,8 @@
+#!/bin/bash
+koji list-hosts --enabled --quiet|awk '{print $1}' > /var/tmp/current-kojid-builders
+
+cat /var/tmp/current-kojid-builders | while read koji_host ; do
+  echo "Disabling koji builder [${koji_host}]"
+  koji disable-host ${koji_host}
+done
+

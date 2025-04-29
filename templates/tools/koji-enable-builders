@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cat /var/tmp/current-kojid-builders | while read koji_host ; do
+  echo "Enabling back koji builder [${koji_host}]"
+  koji enable-host ${koji_host}
+done
+
