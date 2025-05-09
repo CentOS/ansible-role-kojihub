@@ -259,6 +259,7 @@ do
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-baseos --mode bare
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="repo.auto=True"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
                     elif [[ "x$DIST" == "x8" ]] ; then
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build rhel${DIST}-baseos --mode bare
@@ -267,6 +268,7 @@ do
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.new_chroot=0"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="repo.auto=True"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
                     elif [[ "x$DIST" == "x9" ]] ; then
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build rhel${DIST}-baseos --mode bare
@@ -274,6 +276,7 @@ do
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build rhel${DIST}-crb --mode bare
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="repo.auto=True"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.new_chroot=0"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
                     elif [[ "x$DIST" == "x9s" ]] ; then
@@ -283,6 +286,7 @@ do
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.new_chroot=0"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="repo.auto=True"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
                     elif [[ "x$DIST" == "x10" ]] ; then
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build rhel${DIST}-baseos --mode bare
@@ -291,6 +295,7 @@ do
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.new_chroot=1"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="repo.auto=True"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
                     elif [[ "x$DIST" == "x10s" ]] ; then
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-baseos --mode bare
@@ -299,11 +304,13 @@ do
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.new_chroot=1"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="repo.auto=True"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
                     else
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-extras
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-updates
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-os
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra="repo.auto=True"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
                     fi
                     # START bootstrap
