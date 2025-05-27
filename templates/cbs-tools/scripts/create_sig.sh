@@ -288,6 +288,7 @@ do
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.new_chroot=0"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="repo.auto=True"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.distsuffix="s"
                     elif [[ "x$DIST" == "x10" ]] ; then
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build rhel${DIST}-baseos --mode bare
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build rhel${DIST}-appstream --mode bare
@@ -305,6 +306,7 @@ do
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.package_manager=dnf"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="mock.yum.module_hotfixes=1"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra="repo.auto=True"
+                        $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.distsuffix="s"
                         $KOJI edit-tag $R_SIG-$TAG-build --extra rpm.macro.vendor="CentOS ${SIGS^} SIG"
                     else
                         $KOJI add-external-repo --tag=$R_SIG-$TAG-build centos${DIST}-extras
