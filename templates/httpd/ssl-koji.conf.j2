@@ -19,11 +19,7 @@ TransferLog logs/ssl_access_log
 LogLevel warn
 
 SSLEngine on
-SSLHonorCipherOrder on
-
-SSLProtocol all -SSLv2 -SSLv3
-
-SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW:!aNULL:!eNULL:!DES:!MD5:!PSK:!RC4
+{{ httpd_tls_ciphers }}
 
 # Here are the Koji certs/keys/cacert
 
