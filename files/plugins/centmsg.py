@@ -99,7 +99,7 @@ def _dispatch_on_topic(payload):
  
     # Connect to the bus
     try:
-        client = mqtt.Client()
+        client = mqtt.Client("signing")
     except Exception as e:
         logger.error('mqtt client error: %s' % e.message) 
     client.tls_set(ca_certs=mqtt_cacert, certfile=mqtt_tls_cert, keyfile=mqtt_tls_key, tls_version=2)
@@ -113,30 +113,18 @@ def _dispatch_on_topic(payload):
  
     # Publish payload to the bus
     #
-    ret = client.publish(mqtt_topic, json.dumps(payload))
+    try:
+         ret = client.publish(mqtt_topic, json.dumps(payload), qos=2)
+         while not ret.is_published():
+             client.loop(timeout=0.1) 
+    except Exception as e:
+         logger.error('mqtt publish error: %s' % e.message)
+         ret = e.message
  
     # Disconnect from the bus
     client.disconnect()
  
     return ret
- 
-def _get_build_target(task_id):
-    try:
-        task = kojihub.Task(task_id)
-        info = task.getInfo(request=True)
-        request = info['request']
-        if info['method'] in ('build', 'maven'):
-            # request is (source-url, build-target, map-of-other-options)
-            if request[1]:
-                return kojihub.get_build_target(request[1])
-        elif info['method'] == 'winbuild':
-            # request is (vm-name, source-url, build-target, map-of-other-options)
-            if request[2]:
-                return kojihub.get_build_target(request[2])
-    except Exception as e:
-        logger.error('Exception: %s', e)
- 
-    return None
  
  
 @callback('postTag', 'postUntag')
