@@ -35,15 +35,32 @@
   when: koji_auth_kerberos
 
 - block:
-    - name: koji sidetag cleanup
+    - name: koji sidetag cleanup (krb5 auth)
       cron:
         name: "koji sidetags cleanup"
-        job: "koji-sidetag-cleanup --empty-delay={{ koji_kojira_sidetag_cleanup_delay }} --old-delay={{ koji_kojira_sidetag_cleanup_delay }} --inactive-delay={{ koji_kojira_sidetag_cleanup_delay }} -s {{ koji_hub_url }} --keytab /home/{{ koji_admin_user }}/{{ koji_admin_keytab }} --principal {{ koji_admin_principal }}"
+        job: 'echo "[+] $(date)" >> /home/{{ koji_admin_user }}/koji-sidetag-cleanup.log ; koji-sidetag-cleanup --empty-delay={{ koji_kojira_sidetag_cleanup_delay }} --old-delay={{ koji_kojira_sidetag_cleanup_delay }} --inactive-delay={{ koji_kojira_sidetag_cleanup_delay }} -s {{ koji_hub_url }} --keytab /home/{{ koji_admin_user }}/{{ koji_admin_keytab }} --principal {{ koji_admin_principal }} >> /home/{{ koji_admin_user }}/koji-sidetag-cleanup.log'
         hour: "2"
         minute: "35"
         user: "{{ koji_admin_user }}"
 
-  when: koji_kojira_sidetag_cleanup
+  when: 
+    - koji_kojira_sidetag_cleanup
+    - koji_auth_kerberos
+  tags:
+    - sidetag-cleanup
+
+- block:
+    - name: koji sidetag cleanup (tls auth)
+      cron:
+        name: "koji sidetags cleanup"
+        job: 'echo "[+] $(date)" >> /home/{{ koji_admin_user }}/koji-sidetag-cleanup.log ; koji-sidetag-cleanup --empty-delay={{ koji_kojira_sidetag_cleanup_delay }} --old-delay={{ koji_kojira_sidetag_cleanup_delay }} --inactive-delay={{ koji_kojira_sidetag_cleanup_delay }} -s {{ koji_hub_url }} --config /home/{{ koji_admin_user }}/.koji/config --cert /etc/pki/koji/{{ koji_admin_pem }}  >> /home/{{ koji_admin_user }}/koji-sidetag-cleanup.log'
+        hour: "2"
+        minute: "35"
+        user: "{{ koji_admin_user }}"
+
+  when: 
+    - koji_kojira_sidetag_cleanup
+    - koji_auth_tls
   tags:
     - sidetag-cleanup
 
