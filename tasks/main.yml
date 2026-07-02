@@ -10,6 +10,9 @@
     name: httpd
   vars:
     - httpd_tls: True
+  tags:
+    - robots
+    - config
 
 - name: Add the kojihub repo if needed
   ansible.builtin.template:
