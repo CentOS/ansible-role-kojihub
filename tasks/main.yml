@@ -69,14 +69,6 @@
     - conf
     - plugins
 
-- name: Configuring robots.txt
-  copy:
-    src: robots.txt
-    dest: /var/www/common/robots.txt
-  tags:
-    - conf
-    - robots
-
 - name: Configuring koji policy
   copy:
     src: "{{ filestore }}/koji/{{ kojihub_policy_filename }}"
