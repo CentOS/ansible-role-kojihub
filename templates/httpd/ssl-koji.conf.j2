@@ -2,6 +2,13 @@
 <VirtualHost _default_:443>
 
 RewriteEngine on
+{% if httpd_robots_block_ai_agents %}
+# httpd_robots_block_ai_agents boolean turned on so blocking all identified agents directly
+# This is coming from https://github.com/ai-robots-txt/ai.robots.txt/blob/main/.htaccess so update on regular basis
+RewriteCond %{HTTP_USER_AGENT} ({{ httpd_robots_block_ai_agents_list | map('replace', '-', '\\-') | map('replace', '.', '\\.')| map('replace', ' ', '\\ ') | join('|') }}) [NC]
+RewriteRule !^/?robots\.txt$ - [F]
+{% endif %}
+
 RewriteRule  ^/$    /koji [R,L] 
 
  Header always set Strict-Transport-Security "max-age=31536000"  

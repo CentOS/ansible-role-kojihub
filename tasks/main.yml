@@ -10,6 +10,7 @@
     name: httpd
   vars:
     - httpd_tls: True
+    - httpd_robots_block_ai_agents: True
   tags:
     - robots
     - config
