@@ -38,9 +38,21 @@ koji_create_users: False
 koji_hub_tls_crl_url: https://accounts.centos.org/ca/crl.pem
 
 # For https frontend so needed despite using kerberos (or not) auth, see below
+koji_web_public_hostname: koji.centos.org
 koji_web_cacert: koji.centos.org-CAChain.crt
 koji_web_tls_key: koji.centos.org.key
 koji_web_tls_cert: koji.centos.org.crt
+
+# Do we want to protect some part of kojiweb behind openidc auth ?
+koji_web_auth_openidc: False
+# If true, define needed variables
+# Where to send authentication requests to (your idp)
+koji_web_auth_openidc_idp_url: https://id.stg.centos.org/idp/openidc/.well-known/openid-configuration
+koji_web_auth_openidc_client: your_idp_client_id
+koji_web_auth_openidc_secret: your_idp_secret
+# this one can be generated with `openssl rand -base64 32` or even more (just local to httpd for the sessions, nothing related to idp itself     (using client/secret above
+koji_web_auth_openidc_cryptopassphrase: a_long_random_secure_passphrase_here
+
 
 # some httpd snipped to eventually inject into httpd vhost
 # Nothing defined by default but can be defined like this:

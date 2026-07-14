@@ -11,6 +11,7 @@
   vars:
     - httpd_tls: True
     - httpd_robots_block_ai_agents: True
+    - httpd_auth_openidc: "{{ koji_web_auth_openidc }}"
   tags:
     - robots
     - config

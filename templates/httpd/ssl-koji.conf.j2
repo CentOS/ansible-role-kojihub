@@ -1,6 +1,9 @@
 # This file is managed by Ansible
 <VirtualHost _default_:443>
 
+ServerName {{ koji_web_public_hostname }}
+UseCanonicalName On
+
 RewriteEngine on
 {% if httpd_robots_block_ai_agents %}
 # httpd_robots_block_ai_agents boolean turned on so blocking all identified agents directly
@@ -9,7 +12,35 @@ RewriteCond %{HTTP_USER_AGENT} ({{ httpd_robots_block_ai_agents_list | map('repl
 RewriteRule !^/?robots\.txt$ - [F]
 {% endif %}
 
+{% if koji_web_auth_openidc %}
+# koji_web_auth_openidc boolean turned on, so protecting some kojiweb URIs through openidc
+# mod_auth_openidc settings for this vhost
+OIDCProviderMetadataURL {{ koji_web_auth_openidc_idp_url }}
+OIDCClientID            {{ koji_web_auth_openidc_client }}
+OIDCClientSecret        {{ koji_web_auth_openidc_secret }}
+OIDCCryptoPassphrase    {{ koji_web_auth_openidc_cryptopassphrase }}
+# creating "fake" callback to location defined below that will redirect to kojiweb
+OIDCRedirectURI https://{{ koji_web_public_hostname }}/oidc_login/callback
+
+<Location "/oidc_login">
+  AuthType openid-connect
+  Require valid-user
+  # Once authenticated, immediately bounce them back to the main site
+  RewriteRule ^ /koji [R=302,L]
+</Location>
+
+# Redirecting visible webui login to oidc created location
+RewriteRule ^/koji/login/?$ /oidc_login [R=302,L]
+RewriteCond %{REQUEST_URI} !^/oidc_login$
 RewriteRule  ^/$    /koji [R,L] 
+# Checking if users are authenticated otherwise block them to following URIs
+RewriteCond %{HTTP_COOKIE} !mod_auth_openidc_session [NC]
+RewriteRule "^.*/koji/(fileinfo|archivelist|rpminfo|rpmlist|packageinfo|packages|buildrootinfo|userinfo)" "-" [F,L]
+{% else %}
+# Just redirecting all to koji by default
+RewriteRule  ^/$    /koji [R,L] 
+{% endif %}
+
 
  Header always set Strict-Transport-Security "max-age=31536000"  
  Header always set X-Frame-Options "SAMEORIGIN"
