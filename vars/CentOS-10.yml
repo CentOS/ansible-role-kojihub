@@ -1,0 +1,22 @@
+kojihub_pkgs:
+  - "koji-{{ koji_version }}.el10"
+  - "koji-hub-{{ koji_version }}.el10"
+  - "koji-hub-plugins-{{ koji_version }}.el10"
+  - "koji-web-{{ koji_version }}.el10"
+  - "koji-utils-{{ koji_version }}.el10"
+  - git
+  - gnupg2
+  - krb5-workstation
+  - createrepo_c
+  - yum-utils
+  - python3-paho-mqtt
+
+psql_client_pkgs:
+  - postgresql
+  - python3-psycopg2
+
+kojihub_users_sync_pkgs:
+  - python3-requests-gssapi
+
+# See fedora-messaging role but as long a rhel 10.3 isn't released, we rely on python3-cryptography from stream 10
+fedora_messaging_el10_workaround: True
