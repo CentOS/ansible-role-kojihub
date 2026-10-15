@@ -50,6 +50,18 @@
         name: httpd_execmem
         persistent: yes
         state: yes
+    - name: Ensuring cffi under httpd can write
+      copy:
+        src: httpd_systemd_memorydenywrite.conf
+        dest: /etc/systemd/system/httpd.service.d/memorydenywrite.conf
+      register: httpd_systemd_override
+      notify:
+        - restart_httpd
+        
+    - name: Reloading systemd if needed
+      command: systemctl daemon-reload
+      when: httpd_systemd_override is changed  
+
   tags:
     - plugins
 
