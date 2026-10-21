@@ -1,6 +1,6 @@
 [broker]
 urls = {{ koji_hub_plugin_protonmsg_url }}
-cert = /etc/koji-hub/plugins/{{ koji_hub_plugin_protonmsg_cert }}
+cert = /etc/koji-hub/plugins/{{ koji_hub_plugin_protonmsg_key | replace('.key', '.pem') }}
 cacert = /etc/koji-hub/plugins/{{ koji_hub_plugin_protonmsg_ca }}
 topic_prefix = {{ koji_hub_plugin_protonmsg_topic_prefix }}
 connect_timeout = 30

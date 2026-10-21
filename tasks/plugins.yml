@@ -73,9 +73,17 @@
         src: "{{ pkistore }}/umb/{{ item }}"
         dest: "/etc/koji-hub/plugins/{{ item }}"
       with_items:
+        - "{{ koji_hub_plugin_protonmsg_key }}"
         - "{{ koji_hub_plugin_protonmsg_cert }}"
         - "{{ koji_hub_plugin_protonmsg_ca }}"
+      register: umb_certs  
       notify: restart_httpd
+
+    - name: Concat umb files
+      shell:
+        chdir: /etc/koji-hub/plugins
+        cmd: "cat {{ koji_hub_plugin_protonmsg_cert }} {{ koji_hub_plugin_protonmsg_key }} > {{ koji_hub_plugin_protonmsg_key | replace('.key', '.pem') }}"
+      when: umb_certs is changed
   tags:
     - plugins
     - protonmsg

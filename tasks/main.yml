@@ -5,6 +5,7 @@
     - "{{ ansible_distribution }}.yml"
   tags:
     - vars
+    - always
 
 - ansible.builtin.import_role:
     name: httpd
